@@ -154,7 +154,8 @@ world-cup-2026/
   with brackets (`results[g.id]`), not dot access.
 - **Always render team names through `<app-flag [team]="...">`** for the flag,
   and add the team to `flags.ts` (lowercased key → ISO alpha-2). Unknown teams
-  render no flag (safe). "Turkey" renders a trash-can emoji by request.
+  render no flag (safe). "Turkey" is a special case: it renders the Turkey flag
+  **rotated 180° (upside down)** by request (handles "Turkey" and "Turkiye").
 - **Times are always Pacific.** Use the helpers in `util/datetime.ts`; never
   format dates ad hoc. Kickoffs are stored as absolute UTC ISO strings.
 - **Theme via CSS variables** defined in `src/styles.scss` (`--red`, `--ink`,
@@ -220,7 +221,8 @@ All changes are mobile-friendliness + feature/UX requests:
 1. **Schedule page — mobile stacked layout** (`pages/schedule/schedule.scss`).
    Added a `@media (max-width: 560px)` block that reflows each match into a card:
    time + status on a top strip, the two teams stacked vertically with a leading
-   flag and full-width name. Fixes squished team names on phones.
+   flag and full-width name. Fixes squished team names on phones. (Later
+   superseded on desktop by item 10's row restructure.)
 2. **Navbar — single row on mobile** (`src/styles.scss`). The nav links now sit
    in one full-width, evenly-spaced, no-wrap row at all phone widths (font/
    padding scale down at ≤400px) instead of stacking or wrapping raggedly.
@@ -242,4 +244,18 @@ All changes are mobile-friendliness + feature/UX requests:
 7. **Bosnia rename** — "Bosnia and Herzegovina" → "Bosnia" across
    `public/picks.json` (29×), `scripts/build-group-schedule.js`, and `flags.ts`.
    (See gotcha above re: the Excel source.)
-```
+8. **My Picks — centered pick + column headers** (`pages/my-picks/*`). Each pick
+   row is `Match | Picked | Result` with equal flexible side columns
+   (`minmax(0,1fr) auto minmax(0,1fr)`) so the picked team sits centered. Added a
+   per-stage header row (`.pick-head`) labeling the columns **Match · Picked ·
+   Result**, with "Picked" centered over the pick column.
+9. **Turkey flag — upside down** (`flag/flag.ts`). Replaced the trash-can emoji
+   with the real Turkey flag image (`flagcdn.com/tr.svg`) rotated 180° via a
+   `.upside-down` class. Still matches both "Turkey" and "Turkiye".
+10. **Schedule — row restructure (desktop)** (`pages/schedule/{schedule.html,
+    schedule.scss}`). Pulled the stage badge out of the teams block and put the
+    **stage badge + venue together in their own column** (`.sched-info`, stacked,
+    capped width `9.5rem`). Row grid is now `time | group+venue | teams |
+    status`, all `align-items: center`. This keeps the venue from running under
+    the team names and vertically centers the matchup in the row. (Mobile keeps
+    the stacked layout from item 1, with group+venue inline above the teams.)

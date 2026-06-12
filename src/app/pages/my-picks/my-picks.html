@@ -49,6 +49,11 @@
             <span class="stage-pts">{{ grp.points }} pt{{ grp.points === 1 ? '' : 's' }} each</span>
           </h3>
           <ul class="picks">
+            <li class="pick-head" aria-hidden="true">
+              <span class="ph ph-match">Match</span>
+              <span class="ph ph-pick">Picked</span>
+              <span class="ph ph-status">Result</span>
+            </li>
             @for (p of grp.picks; track p.id) {
               <li class="pick" [attr.data-status]="p.status">
                 <span class="pick-match">{{ p.matchup }}</span>

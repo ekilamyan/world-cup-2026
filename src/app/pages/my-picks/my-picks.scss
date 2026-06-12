@@ -106,9 +106,30 @@
   gap: 0.4rem;
 }
 
+.pick-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0 0.8rem 0.15rem;
+  font-size: 0.64rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+}
+
+.ph-pick {
+  justify-self: center;
+}
+
+.ph-status {
+  text-align: right;
+}
+
 .pick {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
   gap: 0.6rem;
   background: var(--paper);
@@ -127,6 +148,7 @@
 .pick-choice {
   display: inline-flex;
   align-items: center;
+  justify-self: center;
   gap: 0.4rem;
   font-weight: 700;
   white-space: nowrap;
@@ -221,6 +243,7 @@
 
   .pick-choice {
     grid-area: choice;
+    justify-self: center;
     white-space: normal;
   }
 }

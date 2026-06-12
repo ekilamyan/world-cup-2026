@@ -39,18 +39,20 @@
 <ng-template #row let-g="g">
   <li class="sched" [attr.data-status]="g.status" [class.next]="g.isNext">
     <span class="sched-time">{{ g.time }}</span>
-    <div class="sched-main">
-      <div class="sched-teams">
-        <span class="stage-badge">{{ g.stageShort }}</span>
-        @if (g.home && g.away) {
-          <span class="tm home"><span class="nm">{{ g.home }}</span><app-flag [team]="g.home" /></span>
-          <span class="vs">v</span>
-          <span class="tm away"><app-flag [team]="g.away" /><span class="nm">{{ g.away }}</span></span>
-        } @else {
-          <span class="pairing">{{ g.label }}</span>
-        }
-      </div>
-      <div class="sched-venue">{{ g.venue }}@if (g.city) { · {{ g.city }} }</div>
+    <div class="sched-info">
+      <span class="stage-badge">{{ g.stageShort }}</span>
+      @if (g.venue) {
+        <span class="sched-venue">{{ g.venue }}@if (g.city) { · {{ g.city }} }</span>
+      }
+    </div>
+    <div class="sched-teams">
+      @if (g.home && g.away) {
+        <span class="tm home"><span class="nm">{{ g.home }}</span><app-flag [team]="g.home" /></span>
+        <span class="vs">v</span>
+        <span class="tm away"><app-flag [team]="g.away" /><span class="nm">{{ g.away }}</span></span>
+      } @else {
+        <span class="pairing">{{ g.label }}</span>
+      }
     </div>
     <span class="sched-status">
       @if (g.isNext) {

@@ -38,8 +38,9 @@
 
 .sched {
   display: grid;
-  grid-template-columns: 5.5rem 1fr auto;
-  gap: 0.6rem;
+  /* time | group+venue (own column, capped width) | teams | status */
+  grid-template-columns: 5.5rem 9.5rem 1fr auto;
+  column-gap: 0.6rem;
   align-items: center;
   background: var(--paper);
   border: 1px solid var(--line);
@@ -63,16 +64,29 @@
   color: var(--ink);
 }
 
+/* Group badge + venue kept together in their own column. Capped width so the
+   venue text never runs underneath the team names. */
+.sched-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.sched-venue {
+  font-size: 0.72rem;
+  line-height: 1.25;
+  color: var(--ink-soft);
+  overflow-wrap: anywhere;
+}
+
 .sched-teams {
   font-weight: 700;
   display: grid;
-  grid-template-columns: 4.2rem minmax(0, 1fr) 0.8rem minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) 0.8rem minmax(0, 1fr);
   align-items: center;
   gap: 0.4rem;
-}
-
-.sched-teams .stage-badge {
-  justify-self: start;
 }
 
 .tm {
@@ -104,13 +118,8 @@
 }
 
 .pairing {
-  grid-column: 2 / 5;
-}
-
-.winner {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
+  grid-column: 1 / 4;
+  text-align: center;
 }
 
 .stage-badge {
@@ -122,6 +131,7 @@
   text-transform: uppercase;
   padding: 0.12rem 0.35rem;
   border-radius: 4px;
+  white-space: nowrap;
 }
 
 .next-tag {
@@ -135,12 +145,6 @@
   border-radius: 999px;
 }
 
-.sched-venue {
-  font-size: 0.74rem;
-  color: var(--ink-soft);
-  margin-top: 0.1rem;
-}
-
 .sched-status {
   display: flex;
   flex-direction: column;
@@ -152,6 +156,9 @@
 }
 
 .winner {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
   color: var(--green);
 }
 
@@ -168,9 +175,10 @@
   .sched {
     grid-template-columns: auto 1fr;
     grid-template-areas:
-      'time   status'
-      'main   main';
-    row-gap: 0.5rem;
+      'time  status'
+      'info  info'
+      'teams teams';
+    row-gap: 0.45rem;
     column-gap: 0.5rem;
     padding: 0.7rem 0.85rem;
   }
@@ -178,11 +186,6 @@
   .sched-time {
     grid-area: time;
     align-self: center;
-  }
-
-  .sched-main {
-    grid-area: main;
-    min-width: 0;
   }
 
   .sched-status {
@@ -194,17 +197,22 @@
     justify-content: flex-end;
   }
 
+  /* Group + venue on one inline row above the teams. */
+  .sched-info {
+    grid-area: info;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
   /* Teams stack vertically, each with a leading flag and full-width name. */
   .sched-teams {
+    grid-area: teams;
     display: flex;
     flex-direction: column;
     align-items: stretch;
     gap: 0.3rem;
-  }
-
-  .sched-teams .stage-badge {
-    align-self: flex-start;
-    margin-bottom: 0.1rem;
   }
 
   .tm {
@@ -233,9 +241,8 @@
     display: none;
   }
 
-  .winner {
-    flex-wrap: wrap;
-    justify-content: flex-end;
-    text-align: right;
+  .pairing {
+    grid-column: auto;
+    text-align: left;
   }
 }

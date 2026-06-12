@@ -10,14 +10,21 @@ function norm(s: string): string {
 }
 
 /** Small inline country flag for a team name. Renders as a fixed-width tile so
- *  names line up in lists. Turkey is shown as a trash can (by request); unknown
- *  teams (e.g. "Draw" or an unset knockout slot) render nothing. */
+ *  names line up in lists. Turkey is shown as its flag rotated 180° / upside
+ *  down (by request); unknown teams (e.g. "Draw" or an unset knockout slot)
+ *  render nothing. */
 @Component({
   selector: 'app-flag',
   imports: [],
   template: `
     @if (isTurkey()) {
-      <span class="flag-icon trash" [attr.aria-label]="team()" title="Turkey">🗑️</span>
+      <img
+        class="flag-icon flag-img upside-down"
+        src="https://flagcdn.com/tr.svg"
+        [alt]="team()"
+        title="Turkey"
+        loading="lazy"
+      />
     } @else if (code() && !failed()) {
       <img
         class="flag-icon flag-img"
@@ -41,10 +48,8 @@ function norm(s: string): string {
       border-radius: 2px;
       box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.2);
     }
-    .trash {
-      text-align: center;
-      font-size: 0.95em;
-      line-height: 1;
+    .upside-down {
+      transform: rotate(180deg);
     }
   `,
 })
