@@ -1,59 +1,51 @@
-# WorldCup2026
+# World Cup 2026 Pool
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.13.
+Leaderboard + admin site for the FIFA World Cup 2026 prediction pool.
 
-## Development server
+- **Leaderboard** (`/`) — everyone ranked by points. Group-stage games are 1 pt
+  each (a pick is correct when it matches the recorded result). Tap a row to see
+  that person's picks vs. results.
+- **Admin** (`/admin`) — passcode-gated; enter each match result and it saves
+  instantly to the Google Sheet and updates the leaderboard.
 
-To start a local development server, run:
+## How the data flows
 
-```bash
-ng serve
+```
+World Cup 2026 Data.xlsx ──(npm run convert)──► public/picks.json   (locked picks, baked in)
+Browser (Angular SPA on Vercel) ──reads picks.json──► computes leaderboard
+                                ──GET/POST results──► Google Apps Script ──► Google Sheet (live results DB)
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Participant picks are locked, so they're baked into `public/picks.json` at build
+time. The only live/mutable data is **match results**, which live in a Google
+Sheet edited via the admin panel (or by hand).
 
-## Code scaffolding
+## Setup
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+1. **Results backend (one-time):** follow `../apps-script/SETUP.md` to create the
+   Google Sheet + Apps Script, set the admin `PASSCODE`, deploy the web app, and
+   paste its `/exec` URL into `src/environments/environment.ts`.
+2. **Picks data:** if the Excel changes, regenerate with `npm run convert`
+   (reads `../World Cup 2026 Data.xlsx` → `public/picks.json`). Commit the JSON.
 
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
+## Commands
 
 ```bash
-ng build
+npm install
+npm run convert         # Excel -> public/picks.json (locked group picks)
+npm run build:schedule  # regenerate group kickoff times/venues -> src/app/data/group-schedule.ts
+npm start               # dev server at http://localhost:4200
+npm run build           # production build -> dist/world-cup-2026/browser
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Pages: `/` leaderboard, `/schedule` (all 104 matches, PT, knockout teams fill in
+as they're set), `/admin`. Scoring is stage-weighted (group 1 → final 6). The
+knockout schedule lives in `src/app/data/knockout-schedule.ts`; group kickoff
+times in `src/app/data/group-schedule.ts` (generated).
 
-## Running unit tests
+## Deploy (Vercel)
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+`vercel.json` is preconfigured: build `ng build`, output
+`dist/world-cup-2026/browser`, with an SPA rewrite so `/admin` deep-links work.
+Connect this folder as the project root in Vercel and deploy.
+"# world-cup-2026" 
