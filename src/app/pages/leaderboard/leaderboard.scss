@@ -1,0 +1,135 @@
+:host {
+  display: block;
+}
+
+.board {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: var(--paper);
+}
+
+.board-head,
+.row-main {
+  display: grid;
+  grid-template-columns: 2.5rem 1fr 4.5rem 3rem;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.board-head {
+  padding: 0.55rem 0.9rem;
+  background: var(--ink);
+  color: #fff;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+}
+
+.board-row {
+  border-top: 1px solid var(--line);
+}
+
+.board-row:first-child {
+  border-top: 0;
+}
+
+.row-main {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  padding: 0.7rem 0.9rem;
+  cursor: pointer;
+  font: inherit;
+}
+
+.row-main:hover {
+  background: var(--cream);
+}
+
+.board-row.expanded .row-main {
+  background: var(--cream-2);
+}
+
+.col-rank {
+  font-weight: 800;
+  color: var(--ink-soft);
+}
+
+.col-rank.top {
+  color: var(--red);
+}
+
+.col-name {
+  font-weight: 700;
+}
+
+.col-correct {
+  text-align: right;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.85rem;
+}
+
+.col-points {
+  text-align: right;
+  font-weight: 800;
+  font-size: 1.1rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* expanded picks */
+.picks {
+  padding: 0.3rem 0.9rem 0.9rem;
+  display: grid;
+  gap: 1px;
+  background: var(--line);
+  border-top: 1px dashed var(--line);
+}
+
+.pick {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 0.6rem;
+  align-items: center;
+  background: var(--paper);
+  padding: 0.4rem 0.5rem;
+  font-size: 0.82rem;
+}
+
+.pick-game {
+  color: var(--ink-soft);
+}
+
+.pick-choice {
+  font-weight: 700;
+  text-align: right;
+}
+
+.pick-result {
+  min-width: 2.5rem;
+  text-align: right;
+  font-weight: 700;
+}
+
+.pick[data-status='correct'] .pick-result {
+  color: var(--green);
+}
+
+.pick[data-status='wrong'] {
+  background: #fdecec;
+}
+
+.pick[data-status='wrong'] .pick-result {
+  color: var(--red);
+  font-size: 0.72rem;
+}
+
+.pick[data-status='pending'] .pick-result {
+  color: var(--ink-soft);
+}

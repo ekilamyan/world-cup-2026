@@ -1,0 +1,184 @@
+<section class="page">
+  <div class="page-head">
+    <h1>Admin</h1>
+    <p class="sub">Enter results & knockout matchups. Changes save instantly.</p>
+  </div>
+
+  @if (!data.hasBackend) {
+    <p class="banner banner-error">
+      No results database is connected. Set <code>appsScriptUrl</code> in
+      <code>src/environments/environment.ts</code> (see <code>apps-script/SETUP.md</code>).
+    </p>
+  }
+
+  @if (!unlocked()) {
+    <form class="gate" (ngSubmit)="unlock()">
+      <label for="pass">Admin passcode</label>
+      <input
+        id="pass"
+        type="password"
+        autocomplete="current-password"
+        [ngModel]="passcode()"
+        (ngModelChange)="passcode.set($event)"
+        name="passcode"
+        placeholder="Enter passcode"
+      />
+      <button type="submit" class="btn-primary" [disabled]="!passcode().trim() || checking()">
+        {{ checking() ? 'Checking…' : 'Unlock' }}
+      </button>
+      @if (unlockError()) {
+        <p class="gate-error">{{ unlockError() }}</p>
+      }
+      <p class="gate-note">The passcode is checked by the server before the panel opens.</p>
+    </form>
+  } @else {
+    <nav class="stage-tabs">
+      @for (s of stages; track s.key) {
+        <button
+          type="button"
+          [class.active]="activeStage() === s.key"
+          (click)="selectStage(s.key)"
+        >
+          <span class="tab-name">{{ s.short }}</span>
+          <span class="tab-meta">
+            {{ data.scoredInStage(s.key) }}/{{ data.gamesForStage(s.key).length }} · {{ s.points }}pt
+          </span>
+        </button>
+      }
+    </nav>
+
+    @if (message()) {
+      <p class="banner" [class.banner-ok]="messageOk()" [class.banner-error]="!messageOk()">
+        {{ message() }}
+      </p>
+    }
+
+    <div class="toolbar">
+      <input
+        type="search"
+        class="search"
+        placeholder="Filter…"
+        [ngModel]="filter()"
+        (ngModelChange)="filter.set($event)"
+      />
+    </div>
+
+    @if (!isKnockout()) {
+      <!-- Group stage: fixed matchups, Home / Draw / Away -->
+      <ul class="games">
+        @for (g of stageGames(); track g.id) {
+          <li class="game" [class.saving]="savingId() === g.id">
+            <div class="game-label">
+              <span class="game-num">{{ g.id }}</span>
+              @if (g.group) {
+                <span class="group-chip">{{ g.group }}</span>
+              }
+              <span>{{ g.label }}</span>
+            </div>
+            <div class="game-controls" role="group" [attr.aria-label]="g.label">
+              <button
+                type="button"
+                [class.sel]="resultFor(g) === g.home"
+                [disabled]="savingId() === g.id"
+                (click)="setResult(g, g.home)"
+              >
+                <app-flag [team]="g.home" />{{ g.home }}
+              </button>
+              <button
+                type="button"
+                class="draw"
+                [class.sel]="resultFor(g) === DRAW"
+                [disabled]="savingId() === g.id"
+                (click)="setResult(g, DRAW)"
+              >
+                Draw
+              </button>
+              <button
+                type="button"
+                [class.sel]="resultFor(g) === g.away"
+                [disabled]="savingId() === g.id"
+                (click)="setResult(g, g.away)"
+              >
+                <app-flag [team]="g.away" />{{ g.away }}
+              </button>
+            </div>
+          </li>
+        }
+      </ul>
+    } @else {
+      <!-- Knockout: pick the two teams, then the winner -->
+      <ul class="games">
+        @for (g of stageGames(); track g.id) {
+          <li class="game ko" [class.saving]="savingId() === g.id">
+            <div class="ko-head">
+              <span class="game-num">{{ g.matchNumber }}</span>
+              <span class="ko-pairing">{{ g.pairing }}</span>
+              <span class="ko-when">{{ formatKickoff(g.kickoffUTC) }}</span>
+            </div>
+            <div class="ko-venue">{{ g.venue }} · {{ g.city }}</div>
+
+            <div class="ko-teams">
+              <select
+                class="team-select"
+                [disabled]="savingId() === g.id"
+                [ngModel]="g.home"
+                (ngModelChange)="setMatchupSide(g, 'home', $event)"
+                [attr.aria-label]="'Home team for match ' + g.matchNumber"
+              >
+                <option value="">— team —</option>
+                @for (t of data.teams(); track t) {
+                  <option [value]="t">{{ t }}</option>
+                }
+              </select>
+              <span class="ko-vs">vs</span>
+              <select
+                class="team-select"
+                [disabled]="savingId() === g.id"
+                [ngModel]="g.away"
+                (ngModelChange)="setMatchupSide(g, 'away', $event)"
+                [attr.aria-label]="'Away team for match ' + g.matchNumber"
+              >
+                <option value="">— team —</option>
+                @for (t of data.teams(); track t) {
+                  <option [value]="t">{{ t }}</option>
+                }
+              </select>
+            </div>
+
+            @if (g.home && g.away) {
+              <div class="ko-winner" role="group" aria-label="Winner">
+                <span class="ko-winner-label">Winner</span>
+                <button
+                  type="button"
+                  [class.sel]="resultFor(g) === g.home"
+                  [disabled]="savingId() === g.id"
+                  (click)="setResult(g, g.home)"
+                >
+                  <app-flag [team]="g.home" />{{ g.home }}
+                </button>
+                <button
+                  type="button"
+                  [class.sel]="resultFor(g) === g.away"
+                  [disabled]="savingId() === g.id"
+                  (click)="setResult(g, g.away)"
+                >
+                  <app-flag [team]="g.away" />{{ g.away }}
+                </button>
+              </div>
+            } @else {
+              <p class="ko-tbd">Select both teams to record a winner.</p>
+            }
+          </li>
+        }
+      </ul>
+    }
+    <p class="hint">Tap a selected option again to clear it.</p>
+
+    <div class="danger-zone">
+      <button type="button" class="btn-reset" [disabled]="savingId() !== null" (click)="resetAll()">
+        Reset all results & matchups
+      </button>
+      <span class="danger-note">Clears the whole database — use this after testing.</span>
+    </div>
+  }
+</section>

@@ -1,0 +1,60 @@
+<section class="page">
+  <div class="page-head">
+    <h1>Leaderboard</h1>
+    <p class="sub">
+      @if (data.ready()) {
+        {{ data.gamesPlayed() }} of {{ data.games().length }} games scored
+      } @else {
+        Loading…
+      }
+    </p>
+  </div>
+
+  @if (!data.hasBackend && data.ready()) {
+    <p class="banner banner-info">
+      Results database not connected yet — everyone shows 0 pts until match results are entered.
+    </p>
+  }
+
+  @if (data.ready()) {
+    <ol class="board">
+      <li class="board-head" aria-hidden="true">
+        <span class="col-rank">#</span>
+        <span class="col-name">Name</span>
+        <span class="col-correct">Correct</span>
+        <span class="col-points">Pts</span>
+      </li>
+
+      @for (row of data.leaderboard(); track row.name) {
+        <li class="board-row" [class.expanded]="expanded() === row.name">
+          <button type="button" class="row-main" (click)="toggle(row.name)">
+            <span class="col-rank" [class.top]="row.rank <= 3">{{ row.rank }}</span>
+            <span class="col-name">{{ row.name }}</span>
+            <span class="col-correct">{{ row.correct }}/{{ row.played }}</span>
+            <span class="col-points">{{ row.points }}</span>
+          </button>
+
+          @if (expanded() === row.name) {
+            <div class="picks">
+              @for (p of breakdown(); track p.label) {
+                <div class="pick" [attr.data-status]="p.status">
+                  <span class="pick-game">{{ p.label }}</span>
+                  <span class="pick-choice">{{ p.pick }}</span>
+                  <span class="pick-result">
+                    @switch (p.status) {
+                      @case ('correct') { ✓ }
+                      @case ('wrong') { ✗ {{ p.result }} }
+                      @case ('pending') { · }
+                      @default { — }
+                    }
+                  </span>
+                </div>
+              }
+            </div>
+          }
+        </li>
+      }
+    </ol>
+    <p class="hint">Tap a row to see that player's picks.</p>
+  }
+</section>

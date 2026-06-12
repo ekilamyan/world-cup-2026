@@ -1,0 +1,66 @@
+<section class="page">
+  <div class="page-head">
+    <h1>Schedule</h1>
+    <p class="sub">
+      @if (data.ready()) {
+        All times Pacific · knockout teams fill in as rounds are set
+      } @else {
+        Loading…
+      }
+    </p>
+  </div>
+
+  @for (day of upcomingDays(); track day.key) {
+    <div class="day">
+      <h2 class="day-label">{{ day.label }}</h2>
+      <ul class="day-games">
+        @for (g of day.games; track g.id) {
+          <ng-container [ngTemplateOutlet]="row" [ngTemplateOutletContext]="{ g }" />
+        }
+      </ul>
+    </div>
+  }
+
+  @if (doneDays().length) {
+    <h2 class="section-head">Completed</h2>
+    @for (day of doneDays(); track day.key) {
+      <div class="day">
+        <h2 class="day-label">{{ day.label }}</h2>
+        <ul class="day-games">
+          @for (g of day.games; track g.id) {
+            <ng-container [ngTemplateOutlet]="row" [ngTemplateOutletContext]="{ g }" />
+          }
+        </ul>
+      </div>
+    }
+  }
+</section>
+
+<ng-template #row let-g="g">
+  <li class="sched" [attr.data-status]="g.status" [class.next]="g.isNext">
+    <span class="sched-time">{{ g.time }}</span>
+    <div class="sched-main">
+      <div class="sched-teams">
+        <span class="stage-badge">{{ g.stageShort }}</span>
+        @if (g.home && g.away) {
+          <span class="tm home"><span class="nm">{{ g.home }}</span><app-flag [team]="g.home" /></span>
+          <span class="vs">v</span>
+          <span class="tm away"><app-flag [team]="g.away" /><span class="nm">{{ g.away }}</span></span>
+        } @else {
+          <span class="pairing">{{ g.label }}</span>
+        }
+      </div>
+      <div class="sched-venue">{{ g.venue }}@if (g.city) { · {{ g.city }} }</div>
+    </div>
+    <span class="sched-status">
+      @if (g.isNext) {
+        <span class="next-tag">Next</span>
+      }
+      @if (g.status === 'done') {
+        <span class="winner">✓ <app-flag [team]="g.result" />{{ g.result }}</span>
+      } @else if (g.status === 'live') {
+        <span class="live">In play</span>
+      }
+    </span>
+  </li>
+</ng-template>

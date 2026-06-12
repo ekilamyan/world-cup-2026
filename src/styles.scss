@@ -1,1 +1,269 @@
-/* You can add global styles to this file, and also import other style files */
+/* ---- World Cup 2026 Pool — global theme (matches the entry flyer) ---- */
+
+:root {
+  --red: #d81f2a;
+  --red-dark: #b3141f;
+  --ink: #141414;
+  --ink-soft: #4a4a4a;
+  --cream: #f2efe8;
+  --cream-2: #e9e5db;
+  --paper: #fbfaf6;
+  --line: #d9d4c8;
+  --gold: #c79a3a;
+  --green: #1f8a4c;
+
+  --shadow: 0 2px 0 rgba(20, 20, 20, 0.08);
+  --radius: 10px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--cream);
+  color: var(--ink);
+  font-family: 'Segoe UI', system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 1.02;
+  margin: 0;
+}
+
+h1 {
+  font-size: clamp(2rem, 6vw, 3.25rem);
+  text-transform: uppercase;
+}
+
+code {
+  background: var(--cream-2);
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+/* ---- App layout ---- */
+
+.site-header {
+  background: var(--ink);
+  color: #fff;
+  border-bottom: 4px solid var(--red);
+}
+
+.site-header .bar {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 0.85rem 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.brand {
+  text-decoration: none;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.brand-kicker {
+  font-size: 0.62rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #cfcfcf;
+}
+
+.brand-title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+}
+
+.brand-title em {
+  color: var(--red);
+  font-style: normal;
+}
+
+.nav {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.nav a {
+  color: #d8d8d8;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.45rem 0.7rem;
+  border-radius: 999px;
+}
+
+.nav a.active,
+.nav a:hover {
+  color: #fff;
+  background: var(--red);
+}
+
+.site-main {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 1.4rem 1.1rem 3rem;
+  min-height: 60vh;
+}
+
+.site-footer {
+  text-align: center;
+  padding: 1.4rem 1rem;
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border-top: 1px solid var(--line);
+}
+
+/* ---- Shared bits ---- */
+
+.page-head {
+  border-left: 6px solid var(--red);
+  padding-left: 0.85rem;
+  margin-bottom: 1.3rem;
+}
+
+.page-head .sub {
+  margin: 0.35rem 0 0;
+  color: var(--ink-soft);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.78rem;
+}
+
+.banner {
+  border-radius: var(--radius);
+  padding: 0.7rem 0.9rem;
+  margin: 0 0 1rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.banner-error {
+  background: #fdecec;
+  color: var(--red-dark);
+  border: 1px solid #f3c2c4;
+}
+
+.banner-info {
+  background: #fff6e0;
+  color: #8a6300;
+  border: 1px solid #ecd9a4;
+}
+
+.banner-ok {
+  background: #e8f6ee;
+  color: #136636;
+  border: 1px solid #b6e0c6;
+}
+
+.btn-primary {
+  background: var(--red);
+  color: #fff;
+  border: 0;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.7rem 1.1rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary:not(:disabled):hover {
+  background: var(--red-dark);
+}
+
+.hint {
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+  text-align: center;
+  margin-top: 1rem;
+}
+
+
+/* ---- Mobile ---- */
+
+@media (max-width: 640px) {
+  .site-header .bar {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .brand {
+    align-items: center;
+  }
+
+  .nav {
+    width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0.3rem;
+  }
+
+  .nav a {
+    flex: 1 1 0;
+    min-width: 0;
+    text-align: center;
+    padding: 0.5rem 0.3rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+
+  .site-footer {
+    font-size: 0.7rem;
+    padding: 1rem 0.75rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .brand-title {
+    font-size: 1.1rem;
+  }
+
+  .brand-kicker {
+    font-size: 0.55rem;
+    letter-spacing: 0.15em;
+  }
+
+  .nav {
+    gap: 0.2rem;
+  }
+
+  .nav a {
+    padding: 0.45rem 0.2rem;
+    font-size: 0.64rem;
+    letter-spacing: 0;
+  }
+}

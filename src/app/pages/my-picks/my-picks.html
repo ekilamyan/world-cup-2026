@@ -1,0 +1,93 @@
+<section class="page">
+  <div class="page-head">
+    <h1>My Picks</h1>
+    <p class="sub">
+      @if (data.ready()) {
+        Type your full name to see the teams you picked
+      } @else {
+        Loading…
+      }
+    </p>
+  </div>
+
+  @if (data.ready()) {
+    <div class="finder">
+      <label class="finder-label" for="name-input">Your full name</label>
+      <input
+        id="name-input"
+        class="finder-input"
+        type="text"
+        autocomplete="off"
+        list="player-names"
+        placeholder="e.g. Jane Smith"
+        [ngModel]="query()"
+        (ngModelChange)="query.set($event)"
+      />
+      <datalist id="player-names">
+        @for (n of allNames(); track n) {
+          <option [value]="n"></option>
+        }
+      </datalist>
+    </div>
+
+    @if (match(); as me) {
+      <div class="me-head">
+        <h2 class="me-name">{{ me.name }}</h2>
+        @if (summary(); as s) {
+          <div class="me-stats">
+            <span class="stat"><strong>{{ s.points }}</strong> pts</span>
+            <span class="stat"><strong>{{ s.correct }}</strong> correct</span>
+            <span class="stat"><strong>#{{ s.rank }}</strong> rank</span>
+          </div>
+        }
+      </div>
+
+      @for (grp of groups(); track grp.short) {
+        <div class="stage">
+          <h3 class="stage-label">
+            {{ grp.label }}
+            <span class="stage-pts">{{ grp.points }} pt{{ grp.points === 1 ? '' : 's' }} each</span>
+          </h3>
+          <ul class="picks">
+            @for (p of grp.picks; track p.id) {
+              <li class="pick" [attr.data-status]="p.status">
+                <span class="pick-match">{{ p.matchup }}</span>
+                <span class="pick-choice">
+                  <app-flag [team]="p.pick" />
+                  <span class="pick-team">{{ p.pick }}</span>
+                </span>
+                <span class="pick-status">
+                  @switch (p.status) {
+                    @case ('correct') { <span class="tag ok">✓ Correct</span> }
+                    @case ('wrong') { <span class="tag bad">✗ {{ p.result }}</span> }
+                    @case ('pending') { <span class="tag wait">· Pending</span> }
+                  }
+                </span>
+              </li>
+            }
+          </ul>
+        </div>
+      }
+
+      @if (!totalPicks()) {
+        <p class="banner banner-info">No picks on record for this name yet.</p>
+      }
+    } @else if (query().trim()) {
+      <div class="empty">
+        <p>No player found for “{{ query() }}”.</p>
+        @if (suggestions().length) {
+          <p class="empty-hint">Did you mean:</p>
+          <div class="suggestions">
+            @for (s of suggestions(); track s) {
+              <button type="button" class="chip" (click)="choose(s)">{{ s }}</button>
+            }
+          </div>
+        } @else {
+          <p class="empty-hint">Check the spelling — use the same full name you entered in the pool.</p>
+        }
+      </div>
+    } @else {
+      <p class="hint">Start typing and pick your name from the list.</p>
+    }
+  }
+</section>

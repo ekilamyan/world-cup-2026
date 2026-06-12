@@ -1,0 +1,241 @@
+:host {
+  display: block;
+}
+
+.day {
+  margin-bottom: 1.5rem;
+}
+
+.section-head {
+  font-size: 1rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+  margin: 2rem 0 1rem;
+  padding-top: 1rem;
+  border-top: 2px dashed var(--line);
+}
+
+.day-label {
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--red-dark);
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid var(--line);
+  margin-bottom: 0.6rem;
+}
+
+.day-games {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.sched {
+  display: grid;
+  grid-template-columns: 5.5rem 1fr auto;
+  gap: 0.6rem;
+  align-items: center;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 0.6rem 0.8rem;
+}
+
+.sched.next {
+  border-color: var(--red);
+  box-shadow: 0 0 0 1px var(--red);
+}
+
+.sched[data-status='done'] {
+  opacity: 0.7;
+}
+
+.sched-time {
+  font-weight: 800;
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+.sched-teams {
+  font-weight: 700;
+  display: grid;
+  grid-template-columns: 4.2rem minmax(0, 1fr) 0.8rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.sched-teams .stage-badge {
+  justify-self: start;
+}
+
+.tm {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.tm.home {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.tm.away {
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.tm .nm {
+  overflow-wrap: anywhere;
+}
+
+.vs {
+  color: var(--ink-soft);
+  font-weight: 600;
+  font-size: 0.78rem;
+  text-align: center;
+}
+
+.pairing {
+  grid-column: 2 / 5;
+}
+
+.winner {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.stage-badge {
+  background: var(--ink);
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 0.12rem 0.35rem;
+  border-radius: 4px;
+}
+
+.next-tag {
+  background: var(--red);
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.12rem 0.4rem;
+  border-radius: 999px;
+}
+
+.sched-venue {
+  font-size: 0.74rem;
+  color: var(--ink-soft);
+  margin-top: 0.1rem;
+}
+
+.sched-status {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.2rem;
+  text-align: right;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.winner {
+  color: var(--green);
+}
+
+.live {
+  color: var(--red);
+  text-transform: uppercase;
+  font-size: 0.68rem;
+  letter-spacing: 0.05em;
+}
+
+/* ---- Mobile: stack each match so team names get full width ---- */
+
+@media (max-width: 560px) {
+  .sched {
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      'time   status'
+      'main   main';
+    row-gap: 0.5rem;
+    column-gap: 0.5rem;
+    padding: 0.7rem 0.85rem;
+  }
+
+  .sched-time {
+    grid-area: time;
+    align-self: center;
+  }
+
+  .sched-main {
+    grid-area: main;
+    min-width: 0;
+  }
+
+  .sched-status {
+    grid-area: status;
+    flex-direction: row;
+    align-items: center;
+    justify-self: end;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  /* Teams stack vertically, each with a leading flag and full-width name. */
+  .sched-teams {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.3rem;
+  }
+
+  .sched-teams .stage-badge {
+    align-self: flex-start;
+    margin-bottom: 0.1rem;
+  }
+
+  .tm {
+    width: 100%;
+    gap: 0.45rem;
+  }
+
+  /* Home is name-then-flag in the DOM; reverse it so the flag leads like away. */
+  .tm.home {
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    text-align: left;
+  }
+
+  .tm.away {
+    justify-content: flex-start;
+  }
+
+  .tm .nm {
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+
+  /* No side-by-side "v" needed once teams are stacked. */
+  .vs {
+    display: none;
+  }
+
+  .winner {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    text-align: right;
+  }
+}
