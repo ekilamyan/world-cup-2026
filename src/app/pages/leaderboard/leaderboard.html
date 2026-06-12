@@ -21,7 +21,6 @@
       <li class="board-head" aria-hidden="true">
         <span class="col-rank">#</span>
         <span class="col-name">Name</span>
-        <span class="col-correct">Correct</span>
         <span class="col-points">Pts</span>
       </li>
 
@@ -30,7 +29,6 @@
           <button type="button" class="row-main" (click)="toggle(row.name)">
             <span class="col-rank" [class.top]="row.rank <= 3">{{ row.rank }}</span>
             <span class="col-name">{{ row.name }}</span>
-            <span class="col-correct">{{ row.correct }}/{{ row.played }}</span>
             <span class="col-points">{{ row.points }}</span>
           </button>
 

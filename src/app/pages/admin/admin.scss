@@ -344,3 +344,61 @@
   font-size: 0.74rem;
   color: var(--ink-soft);
 }
+
+/* ---- Mobile: shrink matchup/winner picks so they don't bleed off-screen ---- */
+
+@media (max-width: 560px) {
+  .game {
+    padding: 0.6rem;
+  }
+
+  /* Group-stage Home / Draw / Away buttons */
+  .game-controls {
+    gap: 0.3rem;
+  }
+
+  .game-controls button {
+    min-width: 0;
+    padding: 0.45rem 0.3rem;
+    font-size: 0.78rem;
+    gap: 0.25rem;
+    overflow-wrap: anywhere;
+  }
+
+  .game-controls button.draw {
+    font-size: 0.68rem;
+  }
+
+  /* Knockout team dropdowns */
+  .ko-teams {
+    gap: 0.3rem;
+  }
+
+  .team-select {
+    min-width: 0;
+    padding: 0.45rem 0.35rem;
+    font-size: 0.82rem;
+  }
+
+  .ko-vs {
+    font-size: 0.72rem;
+  }
+
+  /* Knockout winner picks: label on its own row, two teams share full width */
+  .ko-winner {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.35rem;
+  }
+
+  .ko-winner-label {
+    grid-column: 1 / -1;
+  }
+
+  .ko-winner button {
+    min-width: 0;
+    padding: 0.45rem 0.3rem;
+    font-size: 0.82rem;
+    gap: 0.25rem;
+    overflow-wrap: anywhere;
+  }
+}

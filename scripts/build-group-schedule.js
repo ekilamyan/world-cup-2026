@@ -24,12 +24,12 @@ const ROWS = [
   ['Czech Republic', 'Mexico', '2026-06-24', '7:00 PM', -6, 'Estadio Azteca', 'Mexico City'],
   ['South Africa', 'South Korea', '2026-06-24', '7:00 PM', -6, 'Estadio BBVA', 'Guadalupe'],
   // Group B
-  ['Canada', 'Bosnia and Herzegovina', '2026-06-12', '3:00 PM', -4, 'BMO Field', 'Toronto'],
+  ['Canada', 'Bosnia', '2026-06-12', '3:00 PM', -4, 'BMO Field', 'Toronto'],
   ['Qatar', 'Switzerland', '2026-06-13', '12:00 PM', -7, "Levi's Stadium", 'Santa Clara'],
-  ['Switzerland', 'Bosnia and Herzegovina', '2026-06-18', '12:00 PM', -7, 'SoFi Stadium', 'Inglewood'],
+  ['Switzerland', 'Bosnia', '2026-06-18', '12:00 PM', -7, 'SoFi Stadium', 'Inglewood'],
   ['Canada', 'Qatar', '2026-06-18', '3:00 PM', -7, 'BC Place', 'Vancouver'],
   ['Switzerland', 'Canada', '2026-06-24', '12:00 PM', -7, 'BC Place', 'Vancouver'],
-  ['Bosnia and Herzegovina', 'Qatar', '2026-06-24', '12:00 PM', -7, 'Lumen Field', 'Seattle'],
+  ['Bosnia', 'Qatar', '2026-06-24', '12:00 PM', -7, 'Lumen Field', 'Seattle'],
   // Group C
   ['Brazil', 'Morocco', '2026-06-13', '6:00 PM', -4, 'MetLife Stadium', 'East Rutherford'],
   ['Haiti', 'Scotland', '2026-06-13', '9:00 PM', -4, 'Gillette Stadium', 'Foxborough'],

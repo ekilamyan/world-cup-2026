@@ -2,6 +2,10 @@
 
 Leaderboard + admin site for the FIFA World Cup 2026 prediction pool.
 
+> **Handing this off / picking it up?** See
+> [`docs/PROJECT_OVERVIEW.md`](docs/PROJECT_OVERVIEW.md) for the full
+> architecture, file map, conventions, gotchas, and change log.
+
 - **Leaderboard** (`/`) — everyone ranked by points. Group-stage games are 1 pt
   each (a pick is correct when it matches the recorded result). Tap a row to see
   that person's picks vs. results.

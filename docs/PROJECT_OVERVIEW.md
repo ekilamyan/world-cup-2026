@@ -1,0 +1,245 @@
+# World Cup 2026 Pool — Project Overview & Handoff
+
+A handoff guide for any developer or AI agent picking up this project. It
+explains what the app is, how it's built, where everything lives, the
+conventions to follow, and the gotchas to avoid.
+
+> For end-user/setup basics see [`../README.md`](../README.md) and the backend
+> setup in [`../../apps-script/SETUP.md`](../../apps-script/SETUP.md). This file
+> is the deeper engineering reference.
+
+---
+
+## 1. What it is
+
+A web app for a FIFA World Cup 2026 **prediction pool**. Participants paid a $50
+entry and submitted picks (who wins each game) ahead of time. The app:
+
+- **Leaderboard (`/`)** — everyone ranked by points. Tap a row to expand that
+  person's picks vs. the recorded results.
+- **Schedule (`/schedule`)** — all 104 matches grouped by day (times shown in
+  Pacific). Knockout teams fill in as the bracket is decided.
+- **My Picks (`/my-picks`)** — a participant types their full name and sees all
+  of their own picks, grouped by stage, with correct/wrong/pending status and a
+  points summary.
+- **Admin (`/admin`)** — passcode-gated. Enter match results and choose the two
+  teams for each knockout matchup. Saves instantly to a Google Sheet.
+
+### Scoring
+
+Picks are worth more in later rounds (per the pool flyer):
+
+| Stage        | Points per correct pick |
+| ------------ | ----------------------- |
+| Group        | 1                       |
+| Round of 32  | 2                       |
+| Round of 16  | 3                       |
+| Quarterfinal | 4                       |
+| Semifinal    | 5                       |
+| Final        | 6                       |
+
+A pick is "correct" when its normalized team name equals the recorded result
+(see `normalizeTeam` — strips accents/case/extra spaces, so "Curaçao" matches
+"Curacao"). For knockout games the "result" is the winning team's name.
+
+**Ranking is _dense_:** everyone with the same points shares a rank, and the
+next group gets the next consecutive number (1, 2, 2, 3 — _not_ 1, 2, 2, 4).
+
+---
+
+## 2. Tech stack
+
+- **Angular 21** standalone components, **zoneless**, signal-based.
+  - No NgModules. Routes use `loadComponent` (lazy). State is Angular signals
+    (`signal`, `computed`); no NgRx/RxJS store. `HttpClient` for fetches.
+- **SCSS** per-component + one global `src/styles.scss` (CSS variables theme).
+- **Vitest** for tests (`npm test`). Currently only `app.spec.ts`.
+- **Backend:** a single **Google Apps Script** web app reading/writing a Google
+  Sheet — the only live/mutable datastore. No server of our own.
+- **Hosting:** Vercel (static SPA). Build = `ng build`; output =
+  `dist/world-cup-2026/browser`; SPA rewrite so deep links like `/admin` work.
+
+---
+
+## 3. Architecture & data flow
+
+```
+World Cup 2026 Data.xlsx
+   │  (npm run convert  — MANUAL, one-off)
+   ▼
+public/picks.json          ← locked participant picks + group games (baked in)
+   │
+   ▼  HttpClient GET picks.json (on app load)
+Angular SPA (browser)  ──── computes leaderboard / picks views in the browser
+   │
+   ├── GET  {appsScriptUrl}  → { results, matchups }     (live)
+   └── POST {appsScriptUrl}  → set result / set matchup / verify / reset
+                                     │
+                                     ▼
+                          Google Apps Script  ⇄  Google Sheet (Results, Matchups tabs)
+```
+
+**Two data sources, very different lifecycles:**
+
+1. **Locked, baked-in:** participant picks and the fixed group-stage games live
+   in `public/picks.json`, generated from the Excel at build prep time and
+   committed to the repo. These never change at runtime.
+2. **Live, mutable:** match **results** and knockout **matchups** live in the
+   Google Sheet, edited through the admin panel. Fetched on every load.
+
+`DataService` merges them: `games()` = locked group games + knockout games from
+`KNOCKOUT_SCHEDULE` with admin-selected teams (`matchups()`) spliced in.
+
+### Backend contract (`apps-script/Code.gs`)
+
+- `GET /exec` → `{ ok, results: {gameId: winner}, matchups: {gameId:{home,away}} }`
+- `POST /exec` (body sent as `text/plain` to dodge a CORS preflight):
+  - `{ passcode, action:'verify' }` — unlock check, no write
+  - `{ passcode, gameId, result }` — set/clear a result (empty `result` clears)
+  - `{ passcode, action:'matchup', gameId, home, away }` — set knockout teams
+  - `{ passcode, action:'reset' }` — wipe all results + matchups (testing)
+- Passcode is checked **server-side**, stored in Apps Script Script Properties
+  under `PASSCODE`. The frontend never holds the real passcode.
+
+---
+
+## 4. File map
+
+```
+world-cup-2026/
+├── docs/
+│   └── PROJECT_OVERVIEW.md      ← you are here
+├── public/
+│   ├── picks.json               LOCKED picks + group games (generated, committed)
+│   ├── favicon.png, apple-touch-icon.png
+├── scripts/
+│   ├── convert-excel.js         Excel → public/picks.json   (npm run convert)
+│   └── build-group-schedule.js  group kickoff times/venues → group-schedule.ts
+├── src/
+│   ├── index.html, main.ts, styles.scss   global shell + theme (CSS vars)
+│   ├── environments/environment.ts         appsScriptUrl (backend endpoint)
+│   └── app/
+│       ├── app.ts / app.html / app.scss     root shell: header, nav, footer
+│       ├── app.routes.ts                     route table (lazy components)
+│       ├── app.config.ts                     providers (router, http, zoneless)
+│       ├── models.ts                         types + STAGES + gameLabel/stageInfo
+│       ├── data/
+│       │   ├── flags.ts                      team name → ISO code (flagcdn.com)
+│       │   ├── group-schedule.ts             GENERATED kickoff/venue by game id
+│       │   └── knockout-schedule.ts          fixed knockout bracket + schedule
+│       ├── flag/flag.ts                       <app-flag [team]> inline flag img
+│       ├── services/
+│       │   ├── data.service.ts               central signal store + backend I/O
+│       │   └── scoring.ts                     normalizeTeam, isPickCorrect, leaderboard
+│       ├── util/datetime.ts                   PT (America/Los_Angeles) formatters
+│       └── pages/
+│           ├── leaderboard/                   ranked table + expandable picks
+│           ├── schedule/                      all matches by day
+│           ├── my-picks/                      name lookup → personal picks
+│           └── admin/                         passcode-gated result/matchup entry
+├── angular.json, package.json, tsconfig*.json
+└── vercel.json                                build + SPA rewrite config
+```
+
+---
+
+## 5. Key conventions
+
+- **Standalone + signals only.** New components are standalone (`imports: [...]`
+  in the decorator), state via `signal`/`computed`. Templates use the new
+  control flow (`@if`, `@for`, `@switch`) — not `*ngIf`/`*ngFor`.
+- **Game ids are strings as map keys.** `picks`, `results`, and `matchups` are
+  all `Record<string, ...>` keyed by the numeric game id stringified. Note
+  `tsconfig` has `noPropertyAccessFromIndexSignature`, so index into these maps
+  with brackets (`results[g.id]`), not dot access.
+- **Always render team names through `<app-flag [team]="...">`** for the flag,
+  and add the team to `flags.ts` (lowercased key → ISO alpha-2). Unknown teams
+  render no flag (safe). "Turkey" renders a trash-can emoji by request.
+- **Times are always Pacific.** Use the helpers in `util/datetime.ts`; never
+  format dates ad hoc. Kickoffs are stored as absolute UTC ISO strings.
+- **Theme via CSS variables** defined in `src/styles.scss` (`--red`, `--ink`,
+  `--paper`, `--line`, `--radius`, etc.). Reuse them instead of hardcoding
+  colors.
+- **Responsive breakpoints:** `640px` and `400px` for the global shell/nav;
+  individual pages use `560px` for their own mobile reflows. Mobile fixes are
+  scoped inside `@media (max-width: …)` so desktop is untouched.
+
+---
+
+## 6. Build, run, deploy
+
+```bash
+npm install
+npm start               # dev server → http://localhost:4200
+npm run build           # prod build → dist/world-cup-2026/browser
+npm test                # vitest
+
+npm run convert         # Excel → public/picks.json   (MANUAL — see gotchas)
+npm run build:schedule  # regenerate src/app/data/group-schedule.ts
+```
+
+- **Verify changes:** there is no Playwright/browser MCP wired into this repo,
+  so visual/mobile checks are done by a human opening `http://localhost:4200`
+  (use DevTools device mode for phone widths). `npm run build` is the quick way
+  to confirm a change type-checks.
+- **Deploy:** push; Vercel runs `ng build` and serves the static output with the
+  SPA rewrite from `vercel.json`. The backend (`appsScriptUrl`) is independent —
+  redeploying the Apps Script gives a new `/exec` URL that must be pasted into
+  `src/environments/environment.ts`.
+
+---
+
+## 7. Gotchas (read before editing data)
+
+- **`npm run convert` will overwrite `public/picks.json`.** It regenerates from
+  `World Cup 2026 Data.xlsx`. It is **not** part of `npm run build` or the
+  Vercel deploy — it only runs when invoked manually. Any hand-edit to
+  `picks.json` (see the Bosnia rename below) is **reverted** if someone re-runs
+  convert against the unchanged Excel.
+- **Bosnia naming:** the team is displayed as **"Bosnia"** everywhere. This was
+  changed by hand in `public/picks.json`, `scripts/build-group-schedule.js`, and
+  the `flags.ts` key (`bosnia: 'ba'`). The source `World Cup 2026 Data.xlsx`
+  still says "Bosnia and Herzegovina" — so a future `npm run convert` would
+  bring the long name back. To make it permanent, either fix the Excel or add a
+  rename step in `scripts/convert-excel.js`.
+- **No auth on `/my-picks`.** Picks are public (the leaderboard already lets
+  anyone expand anyone's picks), so the My Picks page intentionally has no
+  password — anyone who knows a name can view those picks.
+- **`appsScriptUrl` is committed** in `environment.ts`. It's a deployment
+  endpoint, not a secret; the real admin passcode lives only in Apps Script
+  Script Properties. Still, treat the URL as semi-public.
+- **"Next"/"live" markers are relative to page load** (`nowMs` captured once on
+  open) — they don't tick live; a refresh re-evaluates them.
+
+---
+
+## 8. Change log — work done in this session
+
+All changes are mobile-friendliness + feature/UX requests:
+
+1. **Schedule page — mobile stacked layout** (`pages/schedule/schedule.scss`).
+   Added a `@media (max-width: 560px)` block that reflows each match into a card:
+   time + status on a top strip, the two teams stacked vertically with a leading
+   flag and full-width name. Fixes squished team names on phones.
+2. **Navbar — single row on mobile** (`src/styles.scss`). The nav links now sit
+   in one full-width, evenly-spaced, no-wrap row at all phone widths (font/
+   padding scale down at ≤400px) instead of stacking or wrapping raggedly.
+3. **New page: My Picks** (`pages/my-picks/*`, route `/my-picks`, nav link in
+   `app.html`). Name lookup (accent/case-insensitive, with a datalist
+   autocomplete and "did you mean" suggestion chips) → that player's picks
+   grouped by stage with correct/wrong/pending tags and a points/correct/rank
+   summary. Reuses `DataService`, `scoring.ts`, and `<app-flag>`.
+4. **Admin — mobile fit for matchup/winner controls** (`pages/admin/admin.scss`).
+   `@media (max-width: 560px)`: gave the grid buttons/selects `min-width: 0` so
+   they shrink instead of overflowing, reduced their padding/font, and reflowed
+   the knockout "Winner" row so the label sits on its own line and the two team
+   buttons share full width. Fixes content bleeding off-screen.
+5. **Leaderboard — column cleanup** (`pages/leaderboard/*`). Removed the
+   "Correct" column entirely (grid is now `# | Name | Pts`) and scoped the large
+   point-total font to data rows so the header titles are all the same size.
+6. **Dense ranking** (`services/scoring.ts`). Switched from standard competition
+   ranking (1, 2, 2, 4) to dense ranking (1, 2, 2, 3).
+7. **Bosnia rename** — "Bosnia and Herzegovina" → "Bosnia" across
+   `public/picks.json` (29×), `scripts/build-group-schedule.js`, and `flags.ts`.
+   (See gotcha above re: the Excel source.)
+```

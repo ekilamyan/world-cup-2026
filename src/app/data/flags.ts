@@ -8,7 +8,7 @@ const CODES: Record<string, string> = {
   'south korea': 'kr',
   'czech republic': 'cz',
   canada: 'ca',
-  'bosnia and herzegovina': 'ba',
+  bosnia: 'ba',
   qatar: 'qa',
   switzerland: 'ch',
   brazil: 'br',

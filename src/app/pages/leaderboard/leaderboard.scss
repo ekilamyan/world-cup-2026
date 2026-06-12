@@ -15,7 +15,7 @@
 .board-head,
 .row-main {
   display: grid;
-  grid-template-columns: 2.5rem 1fr 4.5rem 3rem;
+  grid-template-columns: 2.5rem 1fr 3rem;
   align-items: center;
   gap: 0.5rem;
 }
@@ -69,18 +69,15 @@
   font-weight: 700;
 }
 
-.col-correct {
-  text-align: right;
-  color: var(--ink-soft);
-  font-variant-numeric: tabular-nums;
-  font-size: 0.85rem;
-}
-
 .col-points {
   text-align: right;
   font-weight: 800;
-  font-size: 1.1rem;
   font-variant-numeric: tabular-nums;
+}
+
+/* Larger point total in the data rows only — header titles stay uniform. */
+.row-main .col-points {
+  font-size: 1.1rem;
 }
 
 /* expanded picks */

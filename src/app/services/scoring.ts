@@ -27,8 +27,9 @@ export function playedCount(games: Game[], results: ResultsMap): number {
 
 /**
  * Build the ranked leaderboard from picks + results.
- * Sorted by points desc, then correct desc, then name asc. Ties share a rank
- * (standard competition ranking: 1, 2, 2, 4).
+ * Sorted by points desc, then correct desc, then name asc. Everyone with the
+ * same points shares a rank, and the next group gets the next consecutive
+ * number (dense ranking: 1, 2, 2, 3).
  */
 export function computeLeaderboard(
   games: Game[],
@@ -57,11 +58,12 @@ export function computeLeaderboard(
   });
 
   let lastPoints: number | null = null;
-  let lastRank = 0;
-  return scored.map((row, i) => {
-    const rank = lastPoints === row.points ? lastRank : i + 1;
-    lastPoints = row.points;
-    lastRank = rank;
+  let rank = 0;
+  return scored.map((row) => {
+    if (lastPoints === null || row.points !== lastPoints) {
+      rank += 1;
+      lastPoints = row.points;
+    }
     return { rank, ...row };
   });
 }
