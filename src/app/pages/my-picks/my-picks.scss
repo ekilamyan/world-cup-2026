@@ -70,7 +70,7 @@
   font-size: 1.05rem;
 }
 
-/* ---- Stage groups ---- */
+/* ---- Stage groups (collapsible) ---- */
 
 .stage {
   margin-bottom: 1.3rem;
@@ -81,14 +81,26 @@
   align-items: baseline;
   justify-content: space-between;
   gap: 0.6rem;
+  width: 100%;
+  font: inherit;
   font-size: 0.82rem;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--red-dark);
-  padding-bottom: 0.4rem;
+  background: transparent;
+  border: 0;
   border-bottom: 2px solid var(--line);
+  padding: 0 0 0.4rem;
   margin-bottom: 0.6rem;
+  cursor: pointer;
+  text-align: left;
+}
+
+.stage-name {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.6rem;
 }
 
 .stage-pts {
@@ -96,6 +108,25 @@
   font-weight: 700;
   letter-spacing: 0.04em;
   color: var(--ink-soft);
+}
+
+.stage-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.72rem;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.stage-caret {
+  display: inline-block;
+  transition: transform 0.15s ease;
+  transform: rotate(-90deg); /* collapsed: caret points right */
+}
+
+.stage-label.open .stage-caret {
+  transform: rotate(0); /* expanded: caret points down */
 }
 
 .picks {

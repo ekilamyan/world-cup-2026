@@ -8,6 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "convert": "node scripts/convert-excel.js",
+    "convert:r32": "node scripts/convert-r32.js",
     "build:schedule": "node scripts/build-group-schedule.js"
   },
   "private": true,

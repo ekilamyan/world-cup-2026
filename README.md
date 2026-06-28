@@ -37,10 +37,14 @@ Sheet edited via the admin panel (or by hand).
 ```bash
 npm install
 npm run convert         # Excel -> public/picks.json (locked group picks)
+npm run convert:r32     # merge Round of 32.xlsx picks into picks.json (run AFTER convert)
 npm run build:schedule  # regenerate group kickoff times/venues -> src/app/data/group-schedule.ts
 npm start               # dev server at http://localhost:4200
 npm run build           # production build -> dist/world-cup-2026/browser
 ```
+
+Adding the next knockout round (R16, QF, …) follows one repeatable recipe — see
+[`docs/PROJECT_OVERVIEW.md` §8](docs/PROJECT_OVERVIEW.md#8-adding-the-next-knockout-round-repeatable).
 
 Pages: `/` leaderboard, `/schedule` (all 104 matches, PT, knockout teams fill in
 as they're set), `/admin`. Scoring is stage-weighted (group 1 → final 6). The

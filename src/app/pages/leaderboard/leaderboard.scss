@@ -89,6 +89,46 @@
   border-top: 1px dashed var(--line);
 }
 
+.round-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  width: 100%;
+  font: inherit;
+  font-size: 0.74rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--red-dark);
+  background: var(--cream);
+  border: 0;
+  padding: 0.5rem 0.6rem;
+  cursor: pointer;
+}
+
+.round-head:hover {
+  background: var(--cream-2);
+}
+
+.round-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.round-caret {
+  display: inline-block;
+  transition: transform 0.15s ease;
+  transform: rotate(-90deg); /* collapsed: caret points right */
+}
+
+.round-head.open .round-caret {
+  transform: rotate(0); /* expanded: caret points down */
+}
+
 .pick {
   display: grid;
   grid-template-columns: 1fr auto auto;

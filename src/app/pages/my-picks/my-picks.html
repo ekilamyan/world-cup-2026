@@ -44,33 +44,46 @@
 
       @for (grp of groups(); track grp.short) {
         <div class="stage">
-          <h3 class="stage-label">
-            {{ grp.label }}
-            <span class="stage-pts">{{ grp.points }} pt{{ grp.points === 1 ? '' : 's' }} each</span>
-          </h3>
-          <ul class="picks">
-            <li class="pick-head" aria-hidden="true">
-              <span class="ph ph-match">Match</span>
-              <span class="ph ph-pick">Picked</span>
-              <span class="ph ph-status">Result</span>
-            </li>
-            @for (p of grp.picks; track p.id) {
-              <li class="pick" [attr.data-status]="p.status">
-                <span class="pick-match">{{ p.matchup }}</span>
-                <span class="pick-choice">
-                  <app-flag [team]="p.pick" />
-                  <span class="pick-team">{{ p.pick }}</span>
-                </span>
-                <span class="pick-status">
-                  @switch (p.status) {
-                    @case ('correct') { <span class="tag ok">✓ Correct</span> }
-                    @case ('wrong') { <span class="tag bad">✗ {{ p.result }}</span> }
-                    @case ('pending') { <span class="tag wait">· Pending</span> }
-                  }
-                </span>
+          <button
+            type="button"
+            class="stage-label"
+            [class.open]="isStageOpen(grp.key)"
+            (click)="toggleStage(grp.key)"
+          >
+            <span class="stage-name">
+              {{ grp.label }}
+              <span class="stage-pts">{{ grp.points }} pt{{ grp.points === 1 ? '' : 's' }} each</span>
+            </span>
+            <span class="stage-meta">
+              {{ grp.picks.length }}
+              <span class="stage-caret" aria-hidden="true">▾</span>
+            </span>
+          </button>
+          @if (isStageOpen(grp.key)) {
+            <ul class="picks">
+              <li class="pick-head" aria-hidden="true">
+                <span class="ph ph-match">Match</span>
+                <span class="ph ph-pick">Picked</span>
+                <span class="ph ph-status">Result</span>
               </li>
-            }
-          </ul>
+              @for (p of grp.picks; track p.id) {
+                <li class="pick" [attr.data-status]="p.status">
+                  <span class="pick-match">{{ p.matchup }}</span>
+                  <span class="pick-choice">
+                    <app-flag [team]="p.pick" />
+                    <span class="pick-team">{{ p.pick }}</span>
+                  </span>
+                  <span class="pick-status">
+                    @switch (p.status) {
+                      @case ('correct') { <span class="tag ok">✓ Correct</span> }
+                      @case ('wrong') { <span class="tag bad">✗ {{ p.result }}</span> }
+                      @case ('pending') { <span class="tag wait">· Pending</span> }
+                    }
+                  </span>
+                </li>
+              }
+            </ul>
+          }
         </div>
       }
 

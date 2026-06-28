@@ -34,19 +34,35 @@
 
           @if (expanded() === row.name) {
             <div class="picks">
-              @for (p of breakdown(); track p.label) {
-                <div class="pick" [attr.data-status]="p.status">
-                  <span class="pick-game">{{ p.label }}</span>
-                  <span class="pick-choice">{{ p.pick }}</span>
-                  <span class="pick-result">
-                    @switch (p.status) {
-                      @case ('correct') { ✓ }
-                      @case ('wrong') { ✗ {{ p.result }} }
-                      @case ('pending') { · }
-                      @default { — }
-                    }
+              @for (grp of groups(); track grp.key) {
+                <button
+                  type="button"
+                  class="round-head"
+                  [class.open]="isStageOpen(grp.key)"
+                  (click)="toggleStage(grp.key)"
+                >
+                  <span class="round-name">{{ grp.label }}</span>
+                  <span class="round-meta">
+                    {{ grp.picks.length }}
+                    <span class="round-caret" aria-hidden="true">▾</span>
                   </span>
-                </div>
+                </button>
+                @if (isStageOpen(grp.key)) {
+                  @for (p of grp.picks; track p.label) {
+                    <div class="pick" [attr.data-status]="p.status">
+                      <span class="pick-game">{{ p.label }}</span>
+                      <span class="pick-choice">{{ p.pick }}</span>
+                      <span class="pick-result">
+                        @switch (p.status) {
+                          @case ('correct') { ✓ }
+                          @case ('wrong') { ✗ {{ p.result }} }
+                          @case ('pending') { · }
+                          @default { — }
+                        }
+                      </span>
+                    </div>
+                  }
+                }
               }
             </div>
           }

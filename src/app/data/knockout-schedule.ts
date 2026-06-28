@@ -17,28 +17,30 @@ function ko(
   venue: string,
   city: string,
   pairing: string,
+  home = '',
+  away = '',
 ): Game {
-  return { id, stage, matchNumber: id, kickoffUTC, venue, city, pairing, label: pairing, home: '', away: '' };
+  return { id, stage, matchNumber: id, kickoffUTC, venue, city, pairing, label: pairing, home, away };
 }
 
 export const KNOCKOUT_SCHEDULE: Game[] = [
-  // ---- Round of 32 ----
-  ko(73, 'r32', '2026-06-28T19:00:00Z', 'SoFi Stadium', 'Inglewood', '2A vs 2B'),
-  ko(74, 'r32', '2026-06-29T20:30:00Z', 'Gillette Stadium', 'Foxborough', '1E vs 3A/B/C/D/F'),
-  ko(76, 'r32', '2026-06-29T17:00:00Z', 'NRG Stadium', 'Houston', '1C vs 2F'),
-  ko(75, 'r32', '2026-06-30T01:00:00Z', 'Estadio BBVA', 'Guadalupe', '1F vs 2C'),
-  ko(78, 'r32', '2026-06-30T17:00:00Z', 'AT&T Stadium', 'Arlington', '2E vs 2I'),
-  ko(77, 'r32', '2026-06-30T21:00:00Z', 'MetLife Stadium', 'East Rutherford', '1I vs 3C/D/F/G/H'),
-  ko(79, 'r32', '2026-07-01T01:00:00Z', 'Estadio Azteca', 'Mexico City', '1A vs 3C/E/F/H/I'),
-  ko(80, 'r32', '2026-07-01T16:00:00Z', 'Mercedes-Benz Stadium', 'Atlanta', '1L vs 3E/H/I/J/K'),
-  ko(82, 'r32', '2026-07-01T20:00:00Z', 'Lumen Field', 'Seattle', '1G vs 3A/E/H/I/J'),
-  ko(81, 'r32', '2026-07-02T00:00:00Z', "Levi's Stadium", 'Santa Clara', '1D vs 3B/E/F/I/J'),
-  ko(84, 'r32', '2026-07-02T19:00:00Z', 'SoFi Stadium', 'Inglewood', '1H vs 2J'),
-  ko(83, 'r32', '2026-07-02T23:00:00Z', 'BMO Field', 'Toronto', '2K vs 2L'),
-  ko(85, 'r32', '2026-07-03T03:00:00Z', 'BC Place', 'Vancouver', '1B vs 3E/F/G/I/J'),
-  ko(88, 'r32', '2026-07-03T18:00:00Z', 'AT&T Stadium', 'Arlington', '2D vs 2G'),
-  ko(86, 'r32', '2026-07-03T22:00:00Z', 'Hard Rock Stadium', 'Miami Gardens', '1J vs 2H'),
-  ko(87, 'r32', '2026-07-04T01:30:00Z', 'Arrowhead Stadium', 'Kansas City', '1K vs 3D/E/I/J/L'),
+  // ---- Round of 32 ---- (teams set from "Round of 32.xlsx" / live bracket)
+  ko(73, 'r32', '2026-06-28T19:00:00Z', 'SoFi Stadium', 'Inglewood', '2A vs 2B', 'South Africa', 'Canada'),
+  ko(74, 'r32', '2026-06-29T20:30:00Z', 'Gillette Stadium', 'Foxborough', '1E vs 3A/B/C/D/F', 'Germany', 'Paraguay'),
+  ko(76, 'r32', '2026-06-29T17:00:00Z', 'NRG Stadium', 'Houston', '1C vs 2F', 'Brazil', 'Japan'),
+  ko(75, 'r32', '2026-06-30T01:00:00Z', 'Estadio BBVA', 'Guadalupe', '1F vs 2C', 'Netherlands', 'Morocco'),
+  ko(78, 'r32', '2026-06-30T17:00:00Z', 'AT&T Stadium', 'Arlington', '2E vs 2I', 'Ivory Coast', 'Norway'),
+  ko(77, 'r32', '2026-06-30T21:00:00Z', 'MetLife Stadium', 'East Rutherford', '1I vs 3C/D/F/G/H', 'France', 'Sweden'),
+  ko(79, 'r32', '2026-07-01T01:00:00Z', 'Estadio Azteca', 'Mexico City', '1A vs 3C/E/F/H/I', 'Mexico', 'Ecuador'),
+  ko(80, 'r32', '2026-07-01T16:00:00Z', 'Mercedes-Benz Stadium', 'Atlanta', '1L vs 3E/H/I/J/K', 'England', 'DR Congo'),
+  ko(82, 'r32', '2026-07-01T20:00:00Z', 'Lumen Field', 'Seattle', '1G vs 3A/E/H/I/J', 'Belgium', 'Senegal'),
+  ko(81, 'r32', '2026-07-02T00:00:00Z', "Levi's Stadium", 'Santa Clara', '1D vs 3B/E/F/I/J', 'USA', 'Bosnia'),
+  ko(84, 'r32', '2026-07-02T19:00:00Z', 'SoFi Stadium', 'Inglewood', '1H vs 2J', 'Spain', 'Austria'),
+  ko(83, 'r32', '2026-07-02T23:00:00Z', 'BMO Field', 'Toronto', '2K vs 2L', 'Portugal', 'Croatia'),
+  ko(85, 'r32', '2026-07-03T03:00:00Z', 'BC Place', 'Vancouver', '1B vs 3E/F/G/I/J', 'Switzerland', 'Algeria'),
+  ko(88, 'r32', '2026-07-03T18:00:00Z', 'AT&T Stadium', 'Arlington', '2D vs 2G', 'Australia', 'Egypt'),
+  ko(86, 'r32', '2026-07-03T22:00:00Z', 'Hard Rock Stadium', 'Miami Gardens', '1J vs 2H', 'Argentina', 'Cape Verde'),
+  ko(87, 'r32', '2026-07-04T01:30:00Z', 'Arrowhead Stadium', 'Kansas City', '1K vs 3D/E/I/J/L', 'Colombia', 'Ghana'),
 
   // ---- Round of 16 ----
   ko(90, 'r16', '2026-07-04T17:00:00Z', 'NRG Stadium', 'Houston', 'W73 vs W75'),

@@ -176,6 +176,7 @@ npm run build           # prod build → dist/world-cup-2026/browser
 npm test                # vitest
 
 npm run convert         # Excel → public/picks.json   (MANUAL — see gotchas)
+npm run convert:r32     # merge Round of 32.xlsx picks INTO public/picks.json (run AFTER convert)
 npm run build:schedule  # regenerate src/app/data/group-schedule.ts
 ```
 
@@ -197,6 +198,23 @@ npm run build:schedule  # regenerate src/app/data/group-schedule.ts
   Vercel deploy — it only runs when invoked manually. Any hand-edit to
   `picks.json` (see the Bosnia rename below) is **reverted** if someone re-runs
   convert against the unchanged Excel.
+- **Knockout picks are separate imports; re-run them after every `convert`.**
+  Group picks come from `convert`; each knockout round's winner picks come from
+  its own form export (e.g. `Round of 32.xlsx`) and are **merged into**
+  `picks.json` keyed by FIFA match id via a per-round merge script (`npm run
+  convert:r32`, and the same pattern for later rounds — see
+  [§8](#8-adding-the-next-knockout-round-repeatable)). Because `convert` rewrites
+  `picks.json` from scratch (group picks only), you must re-run every knockout
+  merge **after** any `convert` or those picks are lost. The merge canonicalizes
+  team names to the app's spellings ("Bosnia and Herzegovina"→"Bosnia", "Cabo
+  Verde"→"Cape Verde").
+- **Knockout matchup teams are baked into `knockout-schedule.ts`, not the Sheet.**
+  Normally knockout matchups are admin-set (live, in the Google Sheet). In
+  practice each round's actual teams are hard-coded into `KNOCKOUT_SCHEDULE`
+  (`home`/`away`) as the round is set, so the bracket shows without a round-trip;
+  `games()` still lets a live admin-set matchup override them. **Results
+  (winners) are NOT baked** — they remain live: enter each winner in the admin
+  panel as games finish.
 - **Bosnia naming:** the team is displayed as **"Bosnia"** everywhere. This was
   changed by hand in `public/picks.json`, `scripts/build-group-schedule.js`, and
   the `flags.ts` key (`bosnia: 'ba'`). The source `World Cup 2026 Data.xlsx`
@@ -214,7 +232,57 @@ npm run build:schedule  # regenerate src/app/data/group-schedule.ts
 
 ---
 
-## 8. Change log — work done in this session
+## 8. Adding the next knockout round (repeatable)
+
+The Round of 32 was wired up with the recipe below. Each later round (Round of
+16 → games 89–96, Quarterfinals → 97–100, Semifinals → 101–102, Final → 104) is
+done **exactly the same way**. The UI needs no changes — the schedule, the
+leaderboard's expandable picks, and `/my-picks` all pick up new rounds
+automatically (a new collapsible round section appears, knockout rounds open by
+default, group stays collapsed).
+
+**Inputs you need for the round:**
+
+- The round's picks form export, saved at the repo root as `Round of 16.xlsx`
+  (same shape as `Round of 32.xlsx`: a `Name` column + one column per matchup,
+  header `"Home vs. Away"`, each cell the team that participant picked to win).
+- The actual matchups (which two teams are in each game). Take them from the form
+  header and confirm the FIFA match id for each by **venue + date** against the
+  live bracket — that mapping is already encoded in `knockout-schedule.ts`.
+
+**Steps:**
+
+1. **Set the teams in `src/app/data/knockout-schedule.ts`.** Fill the `home`/`away`
+   args on each `ko(...)` for that round's match ids (R16 = 89–96, etc.), using the
+   app's canonical team spellings (see `flags.ts`; e.g. "Bosnia", "Cape Verde",
+   "DR Congo", "USA"). Add any brand-new team to `flags.ts` (lowercased name → ISO
+   alpha-2) so its flag renders.
+2. **Make the round's merge script.** Copy `scripts/convert-r32.js` to
+   `scripts/convert-r16.js` and change three things: the `XLSX_PATH` filename, the
+   `HOME_TEAM_TO_ID` map (each matchup's canonical **home** team → its FIFA match
+   id), and any new entries in `TEAM_ALIASES` (alternate spellings → canonical).
+   The home team of each matchup is unique within a round, so that map is
+   unambiguous.
+3. **Add an npm script.** In `package.json`, add
+   `"convert:r16": "node scripts/convert-r16.js"` (mirror `convert:r32`).
+4. **Run it:** `npm run convert:r16`. It merges each participant's picks into
+   `public/picks.json` under the round's ids (it preserves earlier picks and is
+   idempotent). It prints `participants updated: N/37` and the matchup→id map —
+   eyeball both. Commit the updated `picks.json`.
+5. **Verify:** `npm run build` (type-check) and open `/` + `/my-picks` to confirm
+   the round shows with the right teams and everyone's picks.
+6. **Results stay live.** As each game finishes, enter the winner in `/admin`
+   (the round's games now show with real teams, so just click the winner). Scoring
+   is automatic and stage-weighted (R16 = 3 pts, QF = 4, SF = 5, Final = 6; a pick
+   is correct when it matches the recorded winner, no draws in knockout).
+
+> Reminder (from §7): `npm run convert` rewrites `picks.json` from the group Excel
+> only, so after any `convert` you must re-run **every** `convert:rNN` to restore
+> the knockout picks.
+
+---
+
+## 9. Change log — work done in this session
 
 All changes are mobile-friendliness + feature/UX requests:
 
@@ -259,3 +327,19 @@ All changes are mobile-friendliness + feature/UX requests:
     status`, all `align-items: center`. This keeps the venue from running under
     the team names and vertically centers the matchup in the row. (Mobile keeps
     the stacked layout from item 1, with group+venue inline above the teams.)
+11. **Round of 32 wired up** (`data/knockout-schedule.ts`,
+    `scripts/convert-r32.js`, `public/picks.json`, `package.json`). Imported the
+    16 R32 matchups + every participant's R32 winner pick from `Round of 32.xlsx`.
+    The 16 actual teams are baked into `KNOCKOUT_SCHEDULE` games 73–88 (mapped to
+    FIFA match ids by venue/date, cross-checked against the live bracket); the
+    per-participant picks are merged into `picks.json` under those ids by the new
+    `npm run convert:r32` (idempotent, name-canonicalizing). Scoring needed no
+    code change — R32 already pays 2 pts/correct, 0 otherwise, no draws. Winners
+    are still entered via the admin panel (only game 73, Canada, is decided so
+    far). See the two new gotchas above, and §8 for the repeatable recipe.
+12. **Picks grouped into collapsible rounds** (`pages/leaderboard/*`,
+    `pages/my-picks/*`). The leaderboard's expandable picks and the My Picks page
+    now group a player's picks by round, newest round first. Each round is a
+    collapsible section (`isStageOpen`/`toggleStage`, caret + pick count);
+    **knockout rounds are open by default, the group stage is collapsed**, so the
+    72 group games don't bury the latest round. New rounds appear automatically.
