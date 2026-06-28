@@ -119,6 +119,11 @@
   font-variant-numeric: tabular-nums;
 }
 
+.stage-earned {
+  font-weight: 800;
+  color: var(--red-dark);
+}
+
 .stage-caret {
   display: inline-block;
   transition: transform 0.15s ease;

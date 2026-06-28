@@ -11,14 +11,19 @@ interface PickRow {
   pick: string;
   result: string;
   status: 'correct' | 'wrong' | 'pending';
+  /** Points earned for this pick (0 unless correct). */
+  points: number;
 }
 
 interface StageGroup {
   key: Stage;
   label: string;
   short: string;
+  /** Points per correct pick in this round. */
   points: number;
   picks: PickRow[];
+  /** Total points earned in this round so far. */
+  earned: number;
 }
 
 @Component({
@@ -85,9 +90,11 @@ export class MyPicks {
             let status: PickRow['status'];
             if (!result) status = 'pending';
             else status = isPickCorrect(pick, result) ? 'correct' : 'wrong';
-            return { id: g.id, matchup: gameLabel(g), pick, result, status };
+            const points = status === 'correct' ? stage.points : 0;
+            return { id: g.id, matchup: gameLabel(g), pick, result, status, points };
           });
-        return { key: stage.key, label: stage.label, short: stage.short, points: stage.points, picks };
+        const earned = picks.reduce((n, p) => n + p.points, 0);
+        return { key: stage.key, label: stage.label, short: stage.short, points: stage.points, picks, earned };
       })
       .filter((grp) => grp.picks.length > 0);
   });

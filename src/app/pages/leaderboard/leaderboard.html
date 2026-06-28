@@ -43,7 +43,7 @@
                 >
                   <span class="round-name">{{ grp.label }}</span>
                   <span class="round-meta">
-                    {{ grp.picks.length }}
+                    <span class="round-pts">{{ grp.earned }} pts</span>
                     <span class="round-caret" aria-hidden="true">▾</span>
                   </span>
                 </button>
@@ -54,7 +54,7 @@
                       <span class="pick-choice">{{ p.pick }}</span>
                       <span class="pick-result">
                         @switch (p.status) {
-                          @case ('correct') { ✓ }
+                          @case ('correct') { ✓ +{{ p.points }} }
                           @case ('wrong') { ✗ {{ p.result }} }
                           @case ('pending') { · }
                           @default { — }

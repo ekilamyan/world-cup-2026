@@ -55,7 +55,7 @@
               <span class="stage-pts">{{ grp.points }} pt{{ grp.points === 1 ? '' : 's' }} each</span>
             </span>
             <span class="stage-meta">
-              {{ grp.picks.length }}
+              <span class="stage-earned">{{ grp.earned }} pts</span>
               <span class="stage-caret" aria-hidden="true">▾</span>
             </span>
           </button>
@@ -75,7 +75,7 @@
                   </span>
                   <span class="pick-status">
                     @switch (p.status) {
-                      @case ('correct') { <span class="tag ok">✓ Correct</span> }
+                      @case ('correct') { <span class="tag ok">✓ Correct +{{ p.points }}</span> }
                       @case ('wrong') { <span class="tag bad">✗ {{ p.result }}</span> }
                       @case ('pending') { <span class="tag wait">· Pending</span> }
                     }

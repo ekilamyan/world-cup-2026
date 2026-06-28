@@ -119,6 +119,11 @@
   font-variant-numeric: tabular-nums;
 }
 
+.round-pts {
+  font-weight: 800;
+  color: var(--red-dark);
+}
+
 .round-caret {
   display: inline-block;
   transition: transform 0.15s ease;
