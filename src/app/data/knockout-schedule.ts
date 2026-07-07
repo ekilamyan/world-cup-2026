@@ -42,15 +42,15 @@ export const KNOCKOUT_SCHEDULE: Game[] = [
   ko(86, 'r32', '2026-07-03T22:00:00Z', 'Hard Rock Stadium', 'Miami Gardens', '1J vs 2H', 'Argentina', 'Cape Verde'),
   ko(87, 'r32', '2026-07-04T01:30:00Z', 'Arrowhead Stadium', 'Kansas City', '1K vs 3D/E/I/J/L', 'Colombia', 'Ghana'),
 
-  // ---- Round of 16 ----
-  ko(90, 'r16', '2026-07-04T17:00:00Z', 'NRG Stadium', 'Houston', 'W73 vs W75'),
-  ko(89, 'r16', '2026-07-04T21:00:00Z', 'Lincoln Financial Field', 'Philadelphia', 'W74 vs W77'),
-  ko(91, 'r16', '2026-07-05T20:00:00Z', 'MetLife Stadium', 'East Rutherford', 'W76 vs W78'),
-  ko(92, 'r16', '2026-07-06T00:00:00Z', 'Estadio Azteca', 'Mexico City', 'W79 vs W80'),
-  ko(93, 'r16', '2026-07-06T19:00:00Z', 'AT&T Stadium', 'Arlington', 'W83 vs W84'),
-  ko(94, 'r16', '2026-07-07T00:00:00Z', 'Lumen Field', 'Seattle', 'W81 vs W82'),
-  ko(95, 'r16', '2026-07-07T16:00:00Z', 'Mercedes-Benz Stadium', 'Atlanta', 'W86 vs W88'),
-  ko(96, 'r16', '2026-07-07T20:00:00Z', 'BC Place', 'Vancouver', 'W85 vs W87'),
+  // ---- Round of 16 ---- (teams set from "Round of 16.xlsx" / live bracket)
+  ko(90, 'r16', '2026-07-04T17:00:00Z', 'NRG Stadium', 'Houston', 'W73 vs W75', 'Canada', 'Morocco'),
+  ko(89, 'r16', '2026-07-04T21:00:00Z', 'Lincoln Financial Field', 'Philadelphia', 'W74 vs W77', 'Paraguay', 'France'),
+  ko(91, 'r16', '2026-07-05T20:00:00Z', 'MetLife Stadium', 'East Rutherford', 'W76 vs W78', 'Brazil', 'Norway'),
+  ko(92, 'r16', '2026-07-06T00:00:00Z', 'Estadio Azteca', 'Mexico City', 'W79 vs W80', 'Mexico', 'England'),
+  ko(93, 'r16', '2026-07-06T19:00:00Z', 'AT&T Stadium', 'Arlington', 'W83 vs W84', 'Portugal', 'Spain'),
+  ko(94, 'r16', '2026-07-07T00:00:00Z', 'Lumen Field', 'Seattle', 'W81 vs W82', 'USA', 'Belgium'),
+  ko(95, 'r16', '2026-07-07T16:00:00Z', 'Mercedes-Benz Stadium', 'Atlanta', 'W86 vs W88', 'Argentina', 'Egypt'),
+  ko(96, 'r16', '2026-07-07T20:00:00Z', 'BC Place', 'Vancouver', 'W85 vs W87', 'Switzerland', 'Colombia'),
 
   // ---- Quarterfinals ----
   ko(97, 'qf', '2026-07-09T20:00:00Z', 'Gillette Stadium', 'Foxborough', 'W89 vs W90'),

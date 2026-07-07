@@ -177,6 +177,7 @@ npm test                # vitest
 
 npm run convert         # Excel → public/picks.json   (MANUAL — see gotchas)
 npm run convert:r32     # merge Round of 32.xlsx picks INTO public/picks.json (run AFTER convert)
+npm run convert:r16     # merge Round of 16.xlsx picks INTO public/picks.json (run AFTER convert)
 npm run build:schedule  # regenerate src/app/data/group-schedule.ts
 ```
 
@@ -243,9 +244,12 @@ default, group stays collapsed).
 
 **Inputs you need for the round:**
 
-- The round's picks form export, saved at the repo root as `Round of 16.xlsx`
-  (same shape as `Round of 32.xlsx`: a `Name` column + one column per matchup,
-  header `"Home vs. Away"`, each cell the team that participant picked to win).
+- The round's picks form export, saved in the **outer project folder** (next to
+  `World Cup 2026 Data.xlsx`, one level above the `world-cup-2026/` app) as e.g.
+  `Round of 16.xlsx` (same shape as `Round of 32.xlsx`: a `Name` column + one
+  column per matchup, header `"Home vs. Away"`, each cell the team that
+  participant picked to win). Extra columns like `Rank`/`Points` are ignored, and
+  a cell of `X`/`x` or blank counts as no pick.
 - The actual matchups (which two teams are in each game). Take them from the form
   header and confirm the FIFA match id for each by **venue + date** against the
   live bracket — that mapping is already encoded in `knockout-schedule.ts`.
@@ -257,12 +261,15 @@ default, group stays collapsed).
    app's canonical team spellings (see `flags.ts`; e.g. "Bosnia", "Cape Verde",
    "DR Congo", "USA"). Add any brand-new team to `flags.ts` (lowercased name → ISO
    alpha-2) so its flag renders.
-2. **Make the round's merge script.** Copy `scripts/convert-r32.js` to
-   `scripts/convert-r16.js` and change three things: the `XLSX_PATH` filename, the
-   `HOME_TEAM_TO_ID` map (each matchup's canonical **home** team → its FIFA match
-   id), and any new entries in `TEAM_ALIASES` (alternate spellings → canonical).
-   The home team of each matchup is unique within a round, so that map is
-   unambiguous.
+2. **Make the round's merge script.** Copy `scripts/convert-r16.js` to
+   `scripts/convert-r8.js` (etc.) and change: the `XLSX_PATH` filename (the round's
+   Excel lives in the **outer** project folder next to `World Cup 2026 Data.xlsx`,
+   i.e. `path.join(ROOT, '..', '<file>.xlsx')`), the `HOME_TEAM_TO_ID` map (each
+   matchup's canonical **home** team → its FIFA match id), and any new entries in
+   `TEAM_ALIASES` (alternate spellings → canonical). The home team of each matchup
+   is unique within a round, so that map is unambiguous. The script already treats
+   a cell of `X`/`x` or blank as **no pick** (skipped, not stored) — participants
+   who leave a matchup empty just won't have that game in their picks.
 3. **Add an npm script.** In `package.json`, add
    `"convert:r16": "node scripts/convert-r16.js"` (mirror `convert:r32`).
 4. **Run it:** `npm run convert:r16`. It merges each participant's picks into
@@ -343,3 +350,14 @@ All changes are mobile-friendliness + feature/UX requests:
     collapsible section (`isStageOpen`/`toggleStage`, caret + pick count);
     **knockout rounds are open by default, the group stage is collapsed**, so the
     72 group games don't bury the latest round. New rounds appear automatically.
+13. **Round of 16 wired up** (`data/knockout-schedule.ts`, `scripts/convert-r16.js`,
+    `public/picks.json`, `package.json`). Same recipe as item 11: the 8 R16 team
+    matchups are baked into `KNOCKOUT_SCHEDULE` games 89–96 (derived by matching
+    `Round of 16.xlsx` headers to each game's `Wxx vs Wyy` pairing × the R32
+    winners), and every participant's R16 winner pick was merged into `picks.json`
+    via the new `npm run convert:r16`. All 37 names matched; 5 placeholder `X`
+    cells (3 participants left the two earliest matchups blank) were skipped, not
+    stored. `convert-r16.js` reads its Excel from the **outer** project folder
+    (like `convert-excel.js`), and adds `X`/blank = no-pick handling on top of the
+    R32 script. All R16 teams already existed in `flags.ts`; no scoring change
+    (R16 pays 3 pts/correct). Winners stay live via `/admin`.
