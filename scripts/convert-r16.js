@@ -3,8 +3,9 @@
 // After the Round of 32 a follow-up Google Form collected each participant's
 // Round-of-16 winner picks. That export ("Round of 16.xlsx") has one sheet:
 //   Rank | Name | Points | <8 R16 matchup columns "Home vs. Away">
-// Each cell is the team that participant picked to advance (or "X" if they left
-// a matchup blank — those are skipped, not stored).
+// Each cell is the team that participant picked to advance (or "X"/blank if they
+// left a matchup unpicked — those are stored as the literal "x" so the missed
+// game still shows in that person's picks; "x" matches no team, so it scores 0).
 //
 // Group picks live in public/picks.json keyed by group game id (1..72). The
 // knockout games use their FIFA match numbers as ids (89..96 for the R16), so
@@ -40,7 +41,8 @@ function canonTeam(value) {
 }
 
 // "X" (case-insensitive) or an empty cell means the participant made no pick for
-// that matchup — skip it rather than storing a bogus team.
+// that matchup — stored as the literal "x" (below) so the missed game still
+// appears in their picks instead of silently vanishing.
 function isNoPick(value) {
   const s = String(value ?? '').trim();
   return s === '' || s.toLowerCase() === 'x';
@@ -106,7 +108,7 @@ function main() {
   const byName = new Map(picksData.participants.map((p) => [p.name.trim().toLowerCase(), p]));
 
   let updated = 0;
-  let skipped = 0;
+  let missed = 0;
   const unmatched = [];
   for (let i = headerRowIdx + 1; i < rows.length; i++) {
     const row = rows[i];
@@ -119,7 +121,8 @@ function main() {
     }
     for (const [col, id] of colToId.entries()) {
       if (isNoPick(row[col])) {
-        skipped++;
+        participant.picks[String(id)] = 'x';
+        missed++;
         continue;
       }
       participant.picks[String(id)] = canonTeam(row[col]);
@@ -135,7 +138,7 @@ function main() {
 
   console.log(`Updated ${PICKS_PATH}`);
   console.log(`  participants updated: ${updated}/${picksData.participants.length}`);
-  console.log(`  blank/"X" picks skipped: ${skipped}`);
+  console.log(`  blank/"X" picks stored as "x": ${missed}`);
   console.log(`  R16 matchups (id: home vs. away):`);
   matchups
     .sort((a, b) => a.id - b.id)

@@ -249,7 +249,8 @@ default, group stays collapsed).
   `Round of 16.xlsx` (same shape as `Round of 32.xlsx`: a `Name` column + one
   column per matchup, header `"Home vs. Away"`, each cell the team that
   participant picked to win). Extra columns like `Rank`/`Points` are ignored, and
-  a cell of `X`/`x` or blank counts as no pick.
+  a cell of `X`/`x` or blank counts as no pick (stored as the literal `"x"` — see
+  step 2 — so the missed game still shows in that person's picks and scores 0).
 - The actual matchups (which two teams are in each game). Take them from the form
   header and confirm the FIFA match id for each by **venue + date** against the
   live bracket — that mapping is already encoded in `knockout-schedule.ts`.
@@ -267,9 +268,12 @@ default, group stays collapsed).
    i.e. `path.join(ROOT, '..', '<file>.xlsx')`), the `HOME_TEAM_TO_ID` map (each
    matchup's canonical **home** team → its FIFA match id), and any new entries in
    `TEAM_ALIASES` (alternate spellings → canonical). The home team of each matchup
-   is unique within a round, so that map is unambiguous. The script already treats
-   a cell of `X`/`x` or blank as **no pick** (skipped, not stored) — participants
-   who leave a matchup empty just won't have that game in their picks.
+   is unique within a round, so that map is unambiguous. The script treats a cell
+   of `X`/`x` or blank as **no pick** and stores the literal `"x"` for it (via
+   `isNoPick`), so the missed game still appears in that person's picks; `"x"`
+   matches no team, so it scores 0. (Re-running with a changed cell that became
+   `X` after a prior real import won't overwrite the old value on its own — strip
+   the round's ids first, or rebuild, when a pick changes to a miss.)
 3. **Add an npm script.** In `package.json`, add
    `"convert:r16": "node scripts/convert-r16.js"` (mirror `convert:r32`).
 4. **Run it:** `npm run convert:r16`. It merges each participant's picks into
@@ -355,9 +359,22 @@ All changes are mobile-friendliness + feature/UX requests:
     matchups are baked into `KNOCKOUT_SCHEDULE` games 89–96 (derived by matching
     `Round of 16.xlsx` headers to each game's `Wxx vs Wyy` pairing × the R32
     winners), and every participant's R16 winner pick was merged into `picks.json`
-    via the new `npm run convert:r16`. All 37 names matched; 5 placeholder `X`
-    cells (3 participants left the two earliest matchups blank) were skipped, not
-    stored. `convert-r16.js` reads its Excel from the **outer** project folder
-    (like `convert-excel.js`), and adds `X`/blank = no-pick handling on top of the
-    R32 script. All R16 teams already existed in `flags.ts`; no scoring change
-    (R16 pays 3 pts/correct). Winners stay live via `/admin`.
+    via the new `npm run convert:r16`. All 37 names matched. `convert-r16.js` reads
+    its Excel from the **outer** project folder (like `convert-excel.js`), and adds
+    `X`/blank = no-pick handling on top of the R32 script. All R16 teams already
+    existed in `flags.ts`; no scoring change (R16 pays 3 pts/correct). Winners stay
+    live via `/admin`.
+14. **R16 data corrections** (`scripts/convert-r16.js`, `public/picks.json`).
+    Two follow-ups after item 13: (a) **Becca G. / Erika W. mix-up** — Erika
+    submitted late and her Canada/Morocco (game 90) answer had been entered under
+    Becca. The sheet was corrected (Becca → Morocco, Erika → `X`) and picks.json
+    rebuilt: restore the committed JSON, strip R16 ids 89–96, re-run
+    `convert:r16`. (b) **Missed games now kept, not dropped** — `convert-r16.js`
+    now stores the literal `"x"` for a blank/`X` cell instead of skipping it, so
+    the 5 missed R16 games (Erika g90; Jonathan F. g89–90; Ismael A. g89–90) show
+    up in those players' picks as a miss (scores 0) rather than vanishing. All 8
+    R16 games now list 37/37 participants. **Caveat:** there is no
+    `Round of 32.xlsx` on disk anymore, so a bare `npm run convert` (which rewrites
+    picks.json from the group Excel only) would lose the R32 picks with no way to
+    re-import — keep that file, or only ever re-run `convert:r16` against the
+    already-baked JSON.
