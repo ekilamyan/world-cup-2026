@@ -67,9 +67,15 @@ export class Leaderboard {
       .filter((grp) => grp.picks.length > 0);
   });
 
-  /** Whether a round's picks are shown. Group stage is collapsed by default. */
+  /** The latest round the player has picks in — open by default. */
+  private readonly defaultOpenStage = computed<Stage | null>(() => this.groups()[0]?.key ?? null);
+
+  /**
+   * Whether a round's picks are shown. Only the latest round with picks (e.g.
+   * the Quarterfinals) is open by default; every other round is collapsed.
+   */
   protected isStageOpen(key: Stage): boolean {
-    const defaultOpen = key !== 'group';
+    const defaultOpen = key === this.defaultOpenStage();
     return this.stageOverrides().has(key) ? !defaultOpen : defaultOpen;
   }
 

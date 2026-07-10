@@ -37,7 +37,7 @@
 </section>
 
 <ng-template #row let-g="g">
-  <li class="sched" [attr.data-status]="g.status" [class.next]="g.isNext">
+  <li class="sched" [attr.data-status]="g.status" [class.current]="g.isCurrent">
     <span class="sched-time">{{ g.time }}</span>
     <div class="sched-info">
       <span class="stage-badge">{{ g.stageShort }}</span>
@@ -55,9 +55,6 @@
       }
     </div>
     <span class="sched-status">
-      @if (g.isNext) {
-        <span class="next-tag">Next</span>
-      }
       @if (g.status === 'done') {
         <span class="winner">✓ <app-flag [team]="g.result" />{{ g.result }}</span>
       } @else if (g.status === 'live') {

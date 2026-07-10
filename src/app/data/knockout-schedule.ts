@@ -52,11 +52,11 @@ export const KNOCKOUT_SCHEDULE: Game[] = [
   ko(95, 'r16', '2026-07-07T16:00:00Z', 'Mercedes-Benz Stadium', 'Atlanta', 'W86 vs W88', 'Argentina', 'Egypt'),
   ko(96, 'r16', '2026-07-07T20:00:00Z', 'BC Place', 'Vancouver', 'W85 vs W87', 'Switzerland', 'Colombia'),
 
-  // ---- Quarterfinals ----
-  ko(97, 'qf', '2026-07-09T20:00:00Z', 'Gillette Stadium', 'Foxborough', 'W89 vs W90'),
-  ko(98, 'qf', '2026-07-10T19:00:00Z', 'SoFi Stadium', 'Inglewood', 'W93 vs W94'),
-  ko(99, 'qf', '2026-07-11T21:00:00Z', 'Hard Rock Stadium', 'Miami Gardens', 'W91 vs W92'),
-  ko(100, 'qf', '2026-07-12T01:00:00Z', 'Arrowhead Stadium', 'Kansas City', 'W95 vs W96'),
+  // ---- Quarterfinals ---- (teams set from "Quarter-Finals.xlsx" / live bracket)
+  ko(97, 'qf', '2026-07-09T20:00:00Z', 'Gillette Stadium', 'Foxborough', 'W89 vs W90', 'France', 'Morocco'),
+  ko(98, 'qf', '2026-07-10T19:00:00Z', 'SoFi Stadium', 'Inglewood', 'W93 vs W94', 'Spain', 'Belgium'),
+  ko(99, 'qf', '2026-07-11T21:00:00Z', 'Hard Rock Stadium', 'Miami Gardens', 'W91 vs W92', 'Norway', 'England'),
+  ko(100, 'qf', '2026-07-12T01:00:00Z', 'Arrowhead Stadium', 'Kansas City', 'W95 vs W96', 'Argentina', 'Switzerland'),
 
   // ---- Semifinals ----
   ko(101, 'sf', '2026-07-14T19:00:00Z', 'AT&T Stadium', 'Arlington', 'W97 vs W98'),

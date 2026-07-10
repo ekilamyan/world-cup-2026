@@ -228,8 +228,10 @@ npm run build:schedule  # regenerate src/app/data/group-schedule.ts
 - **`appsScriptUrl` is committed** in `environment.ts`. It's a deployment
   endpoint, not a secret; the real admin passcode lives only in Apps Script
   Script Properties. Still, treat the URL as semi-public.
-- **"Next"/"live" markers are relative to page load** (`nowMs` captured once on
-  open) — they don't tick live; a refresh re-evaluates them.
+- **"Current"/"live" markers are relative to page load** (`nowMs` captured once
+  on open) — they don't tick live; a refresh re-evaluates them. The schedule's
+  red outline (`.current`) marks the game in play (kicked off, no result yet), so
+  between games nothing is outlined until the next kickoff + refresh.
 
 ---
 
@@ -239,8 +241,9 @@ The Round of 32 was wired up with the recipe below. Each later round (Round of
 16 → games 89–96, Quarterfinals → 97–100, Semifinals → 101–102, Final → 104) is
 done **exactly the same way**. The UI needs no changes — the schedule, the
 leaderboard's expandable picks, and `/my-picks` all pick up new rounds
-automatically (a new collapsible round section appears, knockout rounds open by
-default, group stays collapsed).
+automatically (a new collapsible round section appears; in the leaderboard only
+the newest round is open by default — see item 16 — while `/my-picks` still opens
+all knockout rounds).
 
 **Inputs you need for the round:**
 
@@ -378,3 +381,27 @@ All changes are mobile-friendliness + feature/UX requests:
     picks.json from the group Excel only) would lose the R32 picks with no way to
     re-import — keep that file, or only ever re-run `convert:r16` against the
     already-baked JSON.
+15. **Quarterfinals wired up** (`data/knockout-schedule.ts`, `scripts/convert-qf.js`,
+    `public/picks.json`, `package.json`). Same recipe as items 11/13: the 4 QF team
+    matchups are baked into `KNOCKOUT_SCHEDULE` games 97–100 (mapped by each game's
+    `Wxx vs Wyy` pairing × the R16 winners — France vs. Morocco → 97, Spain vs.
+    Belgium → 98, Norway vs. England → 99, Argentina vs. Switzerland → 100), and
+    every participant's QF winner pick was merged into `picks.json` via the new
+    `npm run convert:qf` (reads `Quarter-Finals.xlsx` from the outer folder). All 37
+    names matched; 8 blank/`X` cells stored as `"x"` (2 no-picks per game). All QF
+    teams already existed in `flags.ts`; no scoring change (QF pays 4 pts/correct).
+    Winners stay live via `/admin`.
+16. **Only the latest round opens by default in the leaderboard picks**
+    (`pages/leaderboard/leaderboard.ts`). Superseded item 12's "all knockout rounds
+    open" default: `isStageOpen` now opens **only** the newest round the player has
+    picks in (`defaultOpenStage` = the first, newest-first `groups()` entry — the
+    Quarterfinals today) and collapses every other round, including earlier
+    knockout rounds. Auto-advances to SF/Final as they're wired up; manual toggling
+    unchanged. (My Picks was left as-is.)
+17. **Schedule outline follows the current game, not the next upcoming**
+    (`pages/schedule/{schedule.ts,schedule.html,schedule.scss}`). Replaced the
+    "next not-yet-played" highlight (`nextId`/`isNext`) with the in-play game
+    (`currentId`/`isCurrent` = started, no result yet; latest kickoff if several are
+    live). The red outline (CSS `.next` → `.current`) now marks the game being
+    played; removed the now-redundant "Next" tag + its `.next-tag` CSS ("In play"
+    already labels it). Nothing is outlined between games (see the gotcha).

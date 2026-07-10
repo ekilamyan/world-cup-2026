@@ -18,7 +18,7 @@ interface SchedGame {
   stageShort: string;
   result: string;
   status: 'done' | 'live' | 'upcoming';
-  isNext: boolean;
+  isCurrent: boolean;
 }
 
 interface Day {
@@ -49,8 +49,10 @@ export class Schedule {
       .filter((g) => g.kickoffUTC)
       .sort((a, b) => a.kickoffUTC!.localeCompare(b.kickoffUTC!));
 
-    // The next not-yet-played match (earliest upcoming with no result).
-    const nextId = games.find((g) => new Date(g.kickoffUTC!).getTime() > now && !results[g.id])?.id;
+    // The current game in play: started (kickoff passed) but no result yet. If
+    // several are live, the most recently kicked off is the "current" one.
+    const liveGames = games.filter((g) => new Date(g.kickoffUTC!).getTime() <= now && !results[g.id]);
+    const currentId = liveGames.length ? liveGames[liveGames.length - 1].id : undefined;
 
     return games.map((g) => {
       const kickoff = new Date(g.kickoffUTC!).getTime();
@@ -69,7 +71,7 @@ export class Schedule {
         stageShort: g.group ? `Group ${g.group}` : stageInfo(g.stage).short,
         result,
         status,
-        isNext: g.id === nextId,
+        isCurrent: g.id === currentId,
       };
     });
   });

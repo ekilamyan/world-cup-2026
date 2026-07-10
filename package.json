@@ -10,6 +10,7 @@
     "convert": "node scripts/convert-excel.js",
     "convert:r32": "node scripts/convert-r32.js",
     "convert:r16": "node scripts/convert-r16.js",
+    "convert:qf": "node scripts/convert-qf.js",
     "build:schedule": "node scripts/build-group-schedule.js"
   },
   "private": true,
