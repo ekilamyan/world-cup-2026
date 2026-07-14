@@ -405,3 +405,12 @@ All changes are mobile-friendliness + feature/UX requests:
     live). The red outline (CSS `.next` → `.current`) now marks the game being
     played; removed the now-redundant "Next" tag + its `.next-tag` CSS ("In play"
     already labels it). Nothing is outlined between games (see the gotcha).
+18. **Semifinals wired up** (`data/knockout-schedule.ts`, `scripts/convert-sf.js`,
+    `public/picks.json`, `package.json`). Same recipe as items 11/13/15: the 2 SF
+    team matchups are baked into `KNOCKOUT_SCHEDULE` games 101–102 (mapped by each
+    game's `Wxx vs Wyy` pairing × the QF winners — France vs. Spain → 101, England
+    vs. Argentina → 102), and every participant's SF winner pick was merged into
+    `picks.json` via the new `npm run convert:sf` (reads `Semi-Finals.xlsx` from the
+    outer folder). All 37 names matched; 4 blank/`X` cells stored as `"x"` (Dietrich
+    D. and Matt P. skipped both games). All SF teams already existed in `flags.ts`;
+    no scoring change (SF pays 5 pts/correct). Winners stay live via `/admin`.

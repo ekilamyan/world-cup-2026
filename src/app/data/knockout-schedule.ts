@@ -58,9 +58,9 @@ export const KNOCKOUT_SCHEDULE: Game[] = [
   ko(99, 'qf', '2026-07-11T21:00:00Z', 'Hard Rock Stadium', 'Miami Gardens', 'W91 vs W92', 'Norway', 'England'),
   ko(100, 'qf', '2026-07-12T01:00:00Z', 'Arrowhead Stadium', 'Kansas City', 'W95 vs W96', 'Argentina', 'Switzerland'),
 
-  // ---- Semifinals ----
-  ko(101, 'sf', '2026-07-14T19:00:00Z', 'AT&T Stadium', 'Arlington', 'W97 vs W98'),
-  ko(102, 'sf', '2026-07-15T19:00:00Z', 'Mercedes-Benz Stadium', 'Atlanta', 'W99 vs W100'),
+  // ---- Semifinals ---- (teams set from "Semi-Finals.xlsx" / live bracket)
+  ko(101, 'sf', '2026-07-14T19:00:00Z', 'AT&T Stadium', 'Arlington', 'W97 vs W98', 'France', 'Spain'),
+  ko(102, 'sf', '2026-07-15T19:00:00Z', 'Mercedes-Benz Stadium', 'Atlanta', 'W99 vs W100', 'England', 'Argentina'),
 
   // ---- Final ----
   ko(104, 'final', '2026-07-19T19:00:00Z', 'MetLife Stadium', 'East Rutherford', 'W101 vs W102'),
