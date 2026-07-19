@@ -63,5 +63,5 @@ export const KNOCKOUT_SCHEDULE: Game[] = [
   ko(102, 'sf', '2026-07-15T19:00:00Z', 'Mercedes-Benz Stadium', 'Atlanta', 'W99 vs W100', 'England', 'Argentina'),
 
   // ---- Final ----
-  ko(104, 'final', '2026-07-19T19:00:00Z', 'MetLife Stadium', 'East Rutherford', 'W101 vs W102'),
+  ko(104, 'final', '2026-07-19T19:00:00Z', 'MetLife Stadium', 'East Rutherford', 'W101 vs W102', 'Spain', 'Argentina'),
 ];

@@ -12,6 +12,7 @@
     "convert:r16": "node scripts/convert-r16.js",
     "convert:qf": "node scripts/convert-qf.js",
     "convert:sf": "node scripts/convert-sf.js",
+    "convert:final": "node scripts/convert-final.js",
     "build:schedule": "node scripts/build-group-schedule.js"
   },
   "private": true,

@@ -414,3 +414,20 @@ All changes are mobile-friendliness + feature/UX requests:
     outer folder). All 37 names matched; 4 blank/`X` cells stored as `"x"` (Dietrich
     D. and Matt P. skipped both games). All SF teams already existed in `flags.ts`;
     no scoring change (SF pays 5 pts/correct). Winners stay live via `/admin`.
+19. **Final wired up** (`data/knockout-schedule.ts`, `scripts/convert-final.js`,
+    `public/picks.json`, `package.json`). Baked the finalists into
+    `KNOCKOUT_SCHEDULE` game 104 (**Spain vs. Argentina** — game 104's `W101 vs
+    W102` × the SF winners) and merged each participant's Final winner pick into
+    `picks.json` via the new `npm run convert:final`. **The Final form export is a
+    raw Google-Forms shape** (`Final.xlsx` in the outer folder), unlike the tidy
+    prior-round files: it has `Timestamp`/`Email Address`/`Name ` columns (note the
+    trailing space) plus extra non-scored questions (3rd-place winner, extra time,
+    penalties). `convert-final.js` handles this — it trims header cells and only
+    imports the single matchup column (the one with `" vs. "`); every other column
+    is ignored. **Only 31 of 37 submitted**, so unlike earlier rounds the script
+    also defaults id 104 to `"x"` for the 6 non-responders (Dietrich D., George,
+    Matt P., Tony R., Austin M., Jovanny R.) so the Final still shows for all 37 and
+    scores 0 for them — final tally 18 Spain / 13 Argentina / 6 no-pick. All Final
+    teams already existed in `flags.ts`; no scoring change (Final pays 6 pts/correct,
+    already in `STAGES`). Winner stays live via `/admin` — enter it once the game
+    (today, 2026-07-19, kickoff 19:00 UTC / 12:00 PT at MetLife) finishes.
